@@ -10,7 +10,7 @@
 
 void light_init(void);
 void light_set_data(const uint8_t data[]);
-void light_set_duty(const uint8_t duty[]);
+void light_set_brightness(const uint8_t brightness[]);
 
 // ˆÈ‰º‚ÌŠÖ”‚Ír_cg_*.cˆÈŠO‚©‚çŒÄ‚Ño‚³‚È‚¢‚±‚ÆI
 void light_next_pos_callback(void);

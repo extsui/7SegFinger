@@ -38,8 +38,6 @@ Includes
 #include "r_cg_intp.h"
 /* Start user code for include. Do not edit comment generated here */
 #include "com.h"
-#include "frame.h"
-#include "light.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -53,7 +51,6 @@ Pragma directive
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
-volatile int flag = 0;
 /* End user code. Do not edit comment generated here */
 
 static void R_MAIN_UserInit(void);
@@ -83,9 +80,6 @@ static void R_MAIN_UserInit(void)
 {
     /* Start user code. Do not edit comment generated here */
 	com_init();
-	frame_init();
-	light_init();
-	
     EI();
     /* End user code. Do not edit comment generated here */
 }

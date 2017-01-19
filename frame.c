@@ -8,6 +8,7 @@
 #include "r_cg_macrodriver.h"
 #include "r_cg_userdefine.h"
 #include "frame.h"
+#include "light.h"
 
 /************************************************************
  * プロトタイプ宣言
@@ -21,11 +22,11 @@ static uint8_t calc_checksum(const frame_t *frame);
  */
 void frame_init(void)
 {
-	/* NOP */
+	light_init();
 }
 
 /**
- * フレーム処理
+ * フレーム解析処理
  * @param [in] data 受信データ
  * @return 解析結果
  * @retval RET_OK: 成功
@@ -33,10 +34,40 @@ void frame_init(void)
  */
 uint8_t frame_analyze_proc(const uint8_t data[])
 {
+	const frame_t *frame = (const frame_t*)data;
+	
+	if (calc_checksum(frame) != 0xFF) {
+		return RET_ERR;
+	}
+	
+	switch (frame->type) {
+	case FRAME_DATA:
+		light_set_data(frame->data);
+		break;
+	case FRAME_BRIGHTNESS:
+		light_set_brightness(frame->data);
+		break;
+	default:
+		return RET_ERR;
+	}
+	
 	return RET_OK;
 }
 
+/**
+ * チェックサムの計算
+ */
 static uint8_t calc_checksum(const frame_t *frame)
 {
-	return 0;
+	int i;
+	uint8_t checksum;
+	
+	checksum = 0;
+	checksum += frame->type;
+	for (i = 0; i < NUM_OF_7SEG; i++) {
+		checksum += frame->data[i];
+	}
+	checksum += frame->checksum;
+	
+	return checksum;
 }

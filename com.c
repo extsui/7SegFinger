@@ -22,8 +22,13 @@ static void do_ack_response(void);
 static void assert_cs(void);
 static void negate_cs(void);
 
+/**
+ * ’ÊM•”‚Ì‰Šú‰»
+ */
 void com_init(void)
 {
+	frame_init();
+	
 	PIN_ACK = 0;
 	assert_cs();
 }

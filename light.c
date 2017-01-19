@@ -67,6 +67,28 @@ void light_init(void)
 }
 
 /**
+ * 表示データの設定
+ */
+void light_set_data(const uint8_t data[])
+{
+	int i;
+	for (i = 0; i < NUM_OF_7SEG; i++) {
+		light[i].data = data[i];
+	}
+}
+
+/**
+ * 輝度の設定
+ */
+void light_set_brightness(const uint8_t brightness[])
+{
+	int i;
+	for (i = 0; i < NUM_OF_7SEG; i++) {
+		light[i].brightness = brightness[i];
+	}
+}
+
+/**
  * 表示切り替えコールバック
  *
  * 現在点灯している7セグを切り替える
