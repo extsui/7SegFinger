@@ -18,9 +18,8 @@
 
 static uint8_t frame_buf[sizeof(frame_t)];
 
+static void enable_spi(void);
 static void do_ack_response(void);
-static void assert_cs(void);
-static void negate_cs(void);
 
 /**
  * 通信部の初期化
@@ -30,14 +29,24 @@ void com_init(void)
 	frame_init();
 	
 	PIN_ACK = 0;
-	assert_cs();
+	enable_spi();
 }
 
+/**
+ * SPI受信完了コールバック
+ */
 void com_received_callback(void)
 {
-	frame_analyze_proc(frame_buf);
+	uint8_t result;
+	result = frame_analyze_proc(frame_buf);
+	if (result == RET_OK) {
+		do_ack_response();
+	}
 }
 
+/**
+ * SPI受信トリガーコールバック
+ */
 void com_receive_trigger_callback(void)
 {
 	if (PIN_nCS == 0) {
@@ -48,12 +57,20 @@ void com_receive_trigger_callback(void)
 	}
 }
 
-static void assert_cs(void)
+/**
+ * SPIの有効化
+ */
+static void enable_spi(void)
 {
 	R_INTC0_Start();
 }
 
-static void negate_cs(void)
+/**
+ * ACK応答
+ */
+static void do_ack_response(void)
 {
-	R_INTC0_Stop();	
+	PIN_ACK = 1;
+	NOP();
+	PIN_ACK = 0;
 }
