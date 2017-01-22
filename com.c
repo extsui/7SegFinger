@@ -10,14 +10,16 @@
 #include "r_cg_intp.h"
 #include "r_cg_userdefine.h"
 
-#include "frame.h"
 #include "com.h"
+#include "frame.h"
+#include "light.h"
 
 #define PIN_nCS		(P13_bit.no7)
 
 static uint8_t frame_buf[sizeof(frame_t)];
 
 static void enable_spi(void);
+static void enable_latch(void);
 
 /**
  * 通信部の初期化
@@ -26,6 +28,7 @@ void com_init(void)
 {
 	frame_init();
 	enable_spi();
+	enable_latch();
 }
 
 /**
@@ -50,9 +53,27 @@ void com_receive_trigger_callback(void)
 }
 
 /**
+ * 表示更新コールバック
+ *
+ * LATCHピンがアサートされた際に呼び出される。
+ */
+void com_update_callback(void)
+{
+	light_update();
+}
+
+/**
  * SPIの有効化
  */
 static void enable_spi(void)
 {
 	R_INTC0_Start();
+}
+
+/**
+ * LATCHの有効化
+ */
+static void enable_latch(void)
+{
+	R_INTC1_Start();
 }

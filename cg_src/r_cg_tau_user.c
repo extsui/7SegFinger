@@ -58,7 +58,7 @@ Global variables and functions
 static void __near r_tau0_channel0_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	light_next_pos_callback();
+	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
 }
 

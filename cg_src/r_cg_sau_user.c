@@ -32,6 +32,7 @@ Includes
 #include "r_cg_macrodriver.h"
 #include "r_cg_sau.h"
 /* Start user code for include. Do not edit comment generated here */
+#include "com.h"
 #include "light.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
@@ -138,7 +139,7 @@ static void __near r_csi01_interrupt(void)
 static void r_csi01_callback_sendend(void)
 {
     /* Start user code. Do not edit comment generated here */
-	light_update_callback();
+	light_update_shift_register_callback();
     /* End user code. Do not edit comment generated here */
 }
 

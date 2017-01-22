@@ -23,9 +23,8 @@ typedef struct {
 	uint8_t brightness;	///< 輝度(0-100)
 } light_t;
 
-/** 点灯情報 */
+/** 点灯中データ情報 */
 static light_t light[NUM_OF_7SEG] = {
-
 	{ 0x60, 100, },
 	{ 0xDA, 6, }, // TODO: 最低輝度は保証したい。つまり、輝度=1でも薄暗く表示はしておきたい。
 	{ 0xF2, 0, }, //		TDR更新前にタイマ1止めて、TDR更新後にタイマスタートで実現可能？
@@ -34,19 +33,10 @@ static light_t light[NUM_OF_7SEG] = {
 	{ 0xFE, 0, },
 	{ 0xFE, 0, },
 	{ 0xFE, 0, },
-	
-/*
-	// 1桁目：'1'、2桁目:'2'、3桁目:'3'、以降:' '
-	{ 0x60, 100, },
-	{ 0xDA, 100, },
-	{ 0xF2, 100, },
-	{ 0x00, 100, },
-	{ 0x00, 100, },
-	{ 0x00, 100, },
-	{ 0x00, 100, },
-	{ 0x00, 100, },
-*/
 };
+
+/** 更新用データ情報 */
+static light_t latch[NUM_OF_7SEG];
 
 /** 現在の点灯箇所 */
 static int light_cur_pos;
@@ -73,7 +63,7 @@ void light_set_data(const uint8_t data[])
 {
 	int i;
 	for (i = 0; i < NUM_OF_7SEG; i++) {
-		light[i].data = data[i];
+		latch[i].data = data[i];
 	}
 }
 
@@ -84,8 +74,16 @@ void light_set_brightness(const uint8_t brightness[])
 {
 	int i;
 	for (i = 0; i < NUM_OF_7SEG; i++) {
-		light[i].brightness = brightness[i];
+		latch[i].brightness = brightness[i];
 	}
+}
+
+/**
+ * 表示中データを設定したデータに更新する
+ */
+void light_update(void)
+{
+	memcpy(light, latch, sizeof(light));
 }
 
 /**
@@ -93,7 +91,7 @@ void light_set_brightness(const uint8_t brightness[])
  *
  * 現在点灯している7セグを切り替える
  */
-void light_next_pos_callback(void)
+void light_move_to_next_pos_callback(void)
 {
 	static uint8_t shift_data[sizeof(light_t)];
 	static const uint8_t bit_table[] = {
@@ -112,11 +110,11 @@ void light_next_pos_callback(void)
 }
 
 /**
- * 表示更新コールバック
+ * シフトレジスタの表示更新コールバック
  *
  * 7セグの表示データを反映する
  */
-void light_update_callback(void)
+void light_update_shift_register_callback(void)
 {
 	uint16_t off_timing;
 	uint8_t new_tdr01h, new_tdr01l;

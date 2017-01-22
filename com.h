@@ -14,5 +14,6 @@ void com_init(void);
 // ˆÈ‰º‚ÍAr_cg_*.c‚©‚çŠ„‚è‚İŠÖ”‚ğˆÚ“®‚·‚é‚±‚Æ‚ÅstaticŠÖ”‚É‚·‚é—\’èB
 void com_receive_trigger_callback(void);
 void com_received_callback(void);
+void com_update_callback(void);
 
 #endif /* COM_H */

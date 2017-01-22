@@ -71,6 +71,7 @@ static void __near r_intc0_interrupt(void)
 static void __near r_intc1_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
+	com_update_callback();
     /* End user code. Do not edit comment generated here */
 }
 
