@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for SAU module.
-* Creation Date: 2017/01/12
+* Creation Date: 2017/01/22
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -94,7 +94,7 @@ void R_CSI00_Create(void)
     SMR00L = _20_SAU_SMRMN_INITIALVALUE | _00_SAU_MODE_CSI | _00_SAU_TRANSFER_END;
     SMR00H = _40_SAU_CLOCK_MODE_TI0N | _00_SAU_TRIGGER_SOFTWARE;
     SCR00L = _80_SAU_LSB | _07_SAU_LENGTH_8;
-    SCR00H = _40_SAU_RECEPTION | _00_SAU_TIMING_1;
+    SCR00H = _40_SAU_RECEPTION | _30_SAU_TIMING_4;
     SDR00H = 0U;
     SOE0 &= (uint8_t)~_01_SAU_CH0_OUTPUT_ENABLE;    /* disable CSI00 output */
     /* Set SI00 pin */

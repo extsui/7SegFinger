@@ -32,12 +32,12 @@ spi = spidev.SpiDev()
 spi.open(0, 0)
 
 #
-# CS+ データ送受信タイミング設定 タイプ1
+# CS+ データ送受信タイミング設定 タイプ4
 #
-# SCK:              ￣￣|＿|￣|＿|￣|＿|￣...
-# SOp: 末尾ビット→      <D7>  <D6>  <D5> ... → 先頭ビット
+# SCK:              ＿＿|￣|＿|￣|＿|￣|＿...
+# SDO: 末尾ビット→    <D7>  <D6>  <D5>   ... → 先頭ビット
 #
-spi.mode = 3
+spi.mode = 0
 
 #
 # SPIのクロック周波数
@@ -49,9 +49,9 @@ spi.mode = 3
 spi.max_speed_hz = 1000000
 
 #
-# テストデータ
+# テストデータ('1', '2', ... ,'8')
 #
-data = [ 0x60, 0xDA, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01, ]
+data = [ 0x60, 0xDA, 0xF2, 0x66, 0xB6, 0xBE, 0xE4, 0xFE, ]
 brightness = [ 100, 100, 100, 100, 100, 100, 100, 100, ]
 
 # 1フレーム作成
@@ -59,8 +59,6 @@ xfer_data = [ 0x00 ]	# タイプ=表示データ
 xfer_data.extend(data)	# 表示データ部
 checksum = calc_checksum(xfer_data)
 xfer_data.append(checksum)
-
-print xfer_data
 
 #
 # RaspberryPiはMSBFirstでしかデータを送信できない。
@@ -75,3 +73,13 @@ print xfer_data
 # フレーム送信
 spi.writebytes(xfer_data)
 
+#
+# 輝度送信
+#
+xfer_data = [ 0x01 ]	# タイプ=輝度データ
+xfer_data.extend(brightness)
+checksum = calc_checksum(xfer_data)
+xfer_data.append(checksum)
+xfer_data = map(reverse_bit_order, xfer_data)
+print xfer_data
+spi.writebytes(xfer_data)

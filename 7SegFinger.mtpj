@@ -632,7 +632,7 @@ cg_src
       <LinkOptionRrm-DefaultValue>False</LinkOptionRrm-DefaultValue>
       <LinkOptionRrmValue-DefaultValue />
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8587174593724779989</TimeTagModified--0>
+      <TimeTagModified--0>-8587165213414397719</TimeTagModified--0>
       <LinkOptionAutoSectionLayout-0>True</LinkOptionAutoSectionLayout-0>
       <LinkOptionCpu-0>False</LinkOptionCpu-0>
       <LinkOptionDebug-0>Debug</LinkOptionDebug-0>
@@ -1591,7 +1591,7 @@ cg_src
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="Interrput_2"&gt;
-        &lt;DataElement key="InusedAs" value=""&gt;
+        &lt;DataElement key="InusedAs" value="INTP1"&gt;
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="Interrput_3"&gt;
@@ -1771,7 +1771,7 @@ cg_src
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="PinNumber_9"&gt;
-        &lt;DataElement key="InusedAs" value="Port0##P00"&gt;
+        &lt;DataElement key="InusedAs" value="INTP##INTP1"&gt;
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="PinNumber_10"&gt;
@@ -2039,7 +2039,7 @@ cg_src
         &lt;/DataElement&gt;
         &lt;DataElement key="NoiseFilterFunction" value="False"&gt;
         &lt;/DataElement&gt;
-        &lt;DataElement key="PinInOut" value="O"&gt;
+        &lt;DataElement key="PinInOut" value="I"&gt;
         &lt;/DataElement&gt;
         &lt;DataElement key="PullUp" value="False"&gt;
         &lt;/DataElement&gt;
@@ -3998,7 +3998,7 @@ cg_src
               &lt;/DataElement&gt;
               &lt;DataElement key="text" value="r_csi00_callback_error"&gt;
               &lt;/DataElement&gt;
-              &lt;DataElement key="inuse" value="Locked"&gt;
+              &lt;DataElement key="inuse" value="Unused"&gt;
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="r_csi00_callback_sendend"&gt;
@@ -4335,7 +4335,7 @@ cg_src
             &lt;/DataElement&gt;
             &lt;DataElement key="text" value="R_INTC1_Start"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="inuse" value="Unused"&gt;
+            &lt;DataElement key="inuse" value="Locked"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="R_INTC1_Stop"&gt;
@@ -4343,7 +4343,7 @@ cg_src
             &lt;/DataElement&gt;
             &lt;DataElement key="text" value="R_INTC1_Stop"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="inuse" value="Unused"&gt;
+            &lt;DataElement key="inuse" value="Locked"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="R_INTC2_Start"&gt;
@@ -4407,7 +4407,7 @@ cg_src
             &lt;/DataElement&gt;
             &lt;DataElement key="text" value="r_intc1_interrupt"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="inuse" value="Unused"&gt;
+            &lt;DataElement key="inuse" value="Locked"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="r_intc2_interrupt"&gt;
@@ -4655,18 +4655,12 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="FunctionName" value="P00"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="True"&gt;
+            &lt;DataElement key="InUse" value="False"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="FunctionIO" value="O"&gt;
+            &lt;DataElement key="FunctionIO" value="I"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="FunctionState" value="0"&gt;
             &lt;/DataElement&gt;
-            &lt;SerializableData name="InUsePins"&gt;
-              &lt;SerializableData name="CG"&gt;
-                &lt;DataElement key="0" value="9"&gt;
-                &lt;/DataElement&gt;
-              &lt;/SerializableData&gt;
-            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="P01"&gt;
@@ -4989,12 +4983,18 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="FunctionName" value="INTP1"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="False"&gt;
+            &lt;DataElement key="InUse" value="True"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="FunctionIO" value="None"&gt;
+            &lt;DataElement key="FunctionIO" value="I"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="FunctionState" value="0"&gt;
             &lt;/DataElement&gt;
+            &lt;SerializableData name="InUsePins"&gt;
+              &lt;SerializableData name="CG"&gt;
+                &lt;DataElement key="0" value="9"&gt;
+                &lt;/DataElement&gt;
+              &lt;/SerializableData&gt;
+            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="KR0"&gt;
@@ -5846,7 +5846,7 @@ cg_src
             &lt;DataElement key="PinDlvDirty" value="False"&gt;
             &lt;/DataElement&gt;
             &lt;SerializableData name="InUseFunctions"&gt;
-              &lt;DataElement key="0" value="P00"&gt;
+              &lt;DataElement key="0" value="INTP1"&gt;
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
@@ -6513,7 +6513,7 @@ cg_src
       &lt;SerializableData name="Port0"&gt;
         &lt;SerializableData name="P00"&gt;
           &lt;SerializableData name="MODULE_UNUSED"&gt;
-            &lt;DataElement key="Checked" value="False"&gt;
+            &lt;DataElement key="Checked" value="True"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="INPUT_MODE"&gt;
@@ -6521,7 +6521,7 @@ cg_src
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="OUTPUT_MODE"&gt;
-            &lt;DataElement key="Checked" value="True"&gt;
+            &lt;DataElement key="Checked" value="False"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="PULLUP_ON"&gt;
@@ -15314,7 +15314,7 @@ cg_src
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="DADA_TIMING_TYPE_1"&gt;
-              &lt;DataElement key="Checked" value="True"&gt;
+              &lt;DataElement key="Checked" value="False"&gt;
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="DADA_TIMING_TYPE_2"&gt;
@@ -15326,7 +15326,7 @@ cg_src
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="DADA_TIMING_TYPE_4"&gt;
-              &lt;DataElement key="Checked" value="False"&gt;
+              &lt;DataElement key="Checked" value="True"&gt;
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="CLOCK_MODE"&gt;
@@ -15688,7 +15688,7 @@ cg_src
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
             &lt;SerializableData name="CALLBACK_RECEIVE_ERROR_USE"&gt;
-              &lt;DataElement key="Checked" value="True"&gt;
+              &lt;DataElement key="Checked" value="False"&gt;
               &lt;/DataElement&gt;
             &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
@@ -16525,13 +16525,13 @@ cg_src
         &lt;/SerializableData&gt;
         &lt;SerializableData name="INTP1"&gt;
           &lt;SerializableData name="INT_USED"&gt;
-            &lt;DataElement key="Checked" value="False"&gt;
+            &lt;DataElement key="Checked" value="True"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="INTP_EDGE"&gt;
             &lt;DataElement key="ContentItemCount" value="3"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="SelectedContentItem" value="failing"&gt;
+            &lt;DataElement key="SelectedContentItem" value="rising"&gt;
             &lt;/DataElement&gt;
             &lt;SerializableData name="ContentItem1"&gt;
               &lt;DataElement key="Pin" value=""&gt;
@@ -19140,9 +19140,9 @@ cg_src
 &lt;/SOAP-ENV:Body&gt;
 &lt;/SOAP-ENV:Envelope&gt;
 </KeyExtGridLayout>
-      <KeyTopViewZoom />
-      <KeyTopViewAngle />
-      <KeyTopViewPartsCollapsed />
+      <KeyTopViewZoom>1</KeyTopViewZoom>
+      <KeyTopViewAngle>0</KeyTopViewAngle>
+      <KeyTopViewPartsCollapsed>False</KeyTopViewPartsCollapsed>
       <KEY_SAVE_ALLOCATED_FUNCTION>False</KEY_SAVE_ALLOCATED_FUNCTION>
       <KEY_SAVE_DEVICE_PIN_LIST_ZOOM>100</KEY_SAVE_DEVICE_PIN_LIST_ZOOM>
       <KEY_SAVE_COLUMN_WIDTH_PIN_NUMBER>0:68:68,1:67:67,2:269:269,3:67:67,4:40:40,5:50:50,6:160:160,7:210:210,8:210:210,9:210:210,10:100:100</KEY_SAVE_COLUMN_WIDTH_PIN_NUMBER>

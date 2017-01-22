@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for INTP module.
-* Creation Date: 2017/01/12
+* Creation Date: 2017/01/22
 ***********************************************************************************************************************/
 #ifndef INTP_H
 #define INTP_H
@@ -71,6 +71,8 @@ Global functions
 void R_INTC_Create(void);
 void R_INTC0_Start(void);
 void R_INTC0_Stop(void);
+void R_INTC1_Start(void);
+void R_INTC1_Stop(void);
 
 /* Start user code for function. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */

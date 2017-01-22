@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for SAU module.
-* Creation Date: 2017/01/12
+* Creation Date: 2017/01/22
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -75,11 +75,7 @@ static void __near r_csi00_interrupt(void)
     err_type = (uint8_t)(SSR00 & _01_SAU_OVERRUN_ERROR);
     SIR00 = (uint8_t)err_type;
 
-    if (1U == err_type)
-    {
-        r_csi00_callback_error(err_type);    /* overrun error occurs */
-    }
-    else
+    if (err_type != 1U)
     {
         if (g_csi00_rx_count < g_csi00_rx_length)
         {
@@ -104,18 +100,6 @@ static void r_csi00_callback_receiveend(void)
 {
     /* Start user code. Do not edit comment generated here */
 	com_received_callback();
-    /* End user code. Do not edit comment generated here */
-}
-/***********************************************************************************************************************
-* Function Name: r_csi00_callback_error
-* Description  : This function is a callback function when CSI00 reception error occurs.
-* Arguments    : err_type -
-*                    error type value
-* Return Value : None
-***********************************************************************************************************************/
-static void r_csi00_callback_error(uint8_t err_type)
-{
-    /* Start user code. Do not edit comment generated here */
     /* End user code. Do not edit comment generated here */
 }
 /***********************************************************************************************************************

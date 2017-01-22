@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for INTP module.
-* Creation Date: 2017/01/12
+* Creation Date: 2017/01/22
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -66,8 +66,13 @@ void R_INTC_Create(void)
     /* Set INTP0 low priority */
     PPR10 = 1U;
     PPR00 = 1U;
+    /* Set INTP1 low priority */
+    PPR11 = 1U;
+    PPR01 = 1U;
     EGN0 = _01_INTP0_EDGE_FALLING_SEL;
-    EGP0 = _01_INTP0_EDGE_RISING_SEL;
+    EGP0 = _01_INTP0_EDGE_RISING_SEL | _02_INTP1_EDGE_RISING_SEL;
+    /* Set INTP1 pin */
+    PM0 |= 0x01U;
 }
 /***********************************************************************************************************************
 * Function Name: R_INTC0_Start
@@ -90,6 +95,28 @@ void R_INTC0_Stop(void)
 {
     PMK0 = 1U;    /* disable INTP0 interrupt */
     PIF0 = 0U;    /* clear INTP0 interrupt flag */
+}
+/***********************************************************************************************************************
+* Function Name: R_INTC1_Start
+* Description  : This function clears INTP1 interrupt flag and enables interrupt.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_INTC1_Start(void)
+{
+    PIF1 = 0U;    /* clear INTP1 interrupt flag */
+    PMK1 = 0U;    /* enable INTP1 interrupt */
+}
+/***********************************************************************************************************************
+* Function Name: R_INTC1_Stop
+* Description  : This function disables INTP1 interrupt and clears interrupt flag.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_INTC1_Stop(void)
+{
+    PMK1 = 1U;    /* disable INTP1 interrupt */
+    PIF1 = 0U;    /* clear INTP1 interrupt flag */
 }
 
 /* Start user code for adding. Do not edit comment generated here */

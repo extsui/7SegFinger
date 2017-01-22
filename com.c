@@ -13,13 +13,11 @@
 #include "frame.h"
 #include "com.h"
 
-#define PIN_ACK	(P0_bit.no0)
-#define PIN_nCS	(P13_bit.no7)
+#define PIN_nCS		(P13_bit.no7)
 
 static uint8_t frame_buf[sizeof(frame_t)];
 
 static void enable_spi(void);
-static void do_ack_response(void);
 
 /**
  * í êMïîÇÃèâä˙âª
@@ -27,8 +25,6 @@ static void do_ack_response(void);
 void com_init(void)
 {
 	frame_init();
-	
-	PIN_ACK = 0;
 	enable_spi();
 }
 
@@ -37,11 +33,7 @@ void com_init(void)
  */
 void com_received_callback(void)
 {
-	uint8_t result;
-	result = frame_analyze_proc(frame_buf);
-	if (result == RET_OK) {
-		do_ack_response();
-	}
+	frame_analyze_proc(frame_buf);
 }
 
 /**
@@ -63,14 +55,4 @@ void com_receive_trigger_callback(void)
 static void enable_spi(void)
 {
 	R_INTC0_Start();
-}
-
-/**
- * ACKâûìö
- */
-static void do_ack_response(void)
-{
-	PIN_ACK = 1;
-	NOP();
-	PIN_ACK = 0;
 }

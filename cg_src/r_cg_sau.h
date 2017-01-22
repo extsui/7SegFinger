@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for SAU module.
-* Creation Date: 2017/01/12
+* Creation Date: 2017/01/22
 ***********************************************************************************************************************/
 #ifndef SAU_H
 #define SAU_H
@@ -244,7 +244,6 @@ void R_CSI00_Create(void);
 void R_CSI00_Start(void);
 void R_CSI00_Stop(void);
 MD_STATUS R_CSI00_Receive(uint8_t * const rx_buf, uint16_t rx_num);
-static void r_csi00_callback_error(uint8_t err_type);
 static void r_csi00_callback_receiveend(void);
 void R_CSI01_Create(void);
 void R_CSI01_Start(void);
