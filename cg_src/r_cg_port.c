@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for Port module.
-* Creation Date: 2017/01/22
+* Creation Date: 2017/01/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -56,10 +56,12 @@ Global variables and functions
 void R_PORT_Create(void)
 {
     P0 = _00_Pn3_OUTPUT_0 | _00_Pn6_OUTPUT_0;
+    P4 = _00_Pn1_OUTPUT_0;
     PMC0 = _02_PMCn1_NOT_USE | _04_PMCn2_NOT_USE | _00_PMCn3_DI_ON | _10_PMCn4_NOT_USE | _20_PMCn5_NOT_USE | 
            _00_PMCn6_DI_ON | _80_PMCn7_NOT_USE | _01_PMC0_DEFAULT;
     PM0 = _01_PMn0_NOT_USE | _02_PMn1_NOT_USE | _04_PMn2_NOT_USE | _00_PMn3_MODE_OUTPUT | _10_PMn4_NOT_USE | 
           _20_PMn5_NOT_USE | _00_PMn6_MODE_OUTPUT | _80_PMn7_NOT_USE;
+    PM4 = _01_PMn0_NOT_USE | _00_PMn1_MODE_OUTPUT | _FC_PM4_DEFAULT;
 }
 
 /* Start user code for adding. Do not edit comment generated here */

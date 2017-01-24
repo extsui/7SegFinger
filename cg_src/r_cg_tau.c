@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for TAU module.
-* Creation Date: 2017/01/22
+* Creation Date: 2017/01/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -96,8 +96,8 @@ void R_TAU0_Create(void)
     TMR01L = _08_TAU_MODE_ONESHOT;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR01H = _94_TAU_TDR01H_VALUE;
-    TDR01L = _70_TAU_TDR01L_VALUE;
+    TDR01H = _9B_TAU_TDR01H_VALUE;
+    TDR01L = _78_TAU_TDR01L_VALUE;
     TOM0 |= _02_TAU_CH1_OUTPUT_COMBIN;
     TOL0 |= _02_TAU_CH1_OUTPUT_LEVEL_L;
     TO0 |= _02_TAU_CH1_OUTPUT_VALUE_1;

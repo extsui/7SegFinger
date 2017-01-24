@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file includes user definition.
-* Creation Date: 2017/01/22
+* Creation Date: 2017/01/24
 ***********************************************************************************************************************/
 #ifndef _USER_DEF_H
 #define _USER_DEF_H
@@ -40,6 +40,8 @@ typedef enum {
 
 #define RET_OK	(0)
 #define RET_ERR	(1)
+
+#define DEBUG_PIN	(P4_bit.no1)
 
 #define NUM_OF_7SEG	(8)	// 7ƒZƒOƒƒ“ƒgLED‚ÌŒÂ”
 /* End user code. Do not edit comment generated here */

@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for TAU module.
-* Creation Date: 2017/01/22
+* Creation Date: 2017/01/24
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -58,6 +58,7 @@ Global variables and functions
 static void __near r_tau0_channel2_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
+	DEBUG_PIN = 1;
 	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
 }

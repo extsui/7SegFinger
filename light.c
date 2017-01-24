@@ -37,9 +37,9 @@ static light_t light[NUM_OF_7SEG] = {
 
 /** 更新用データ情報 */
 static light_t latch[NUM_OF_7SEG] = {
-	{ 0xFF, 100, },
-	{ 0xFF, 1, },
-	{ 0xFF, 0, },
+	{ 0xFF, 1, },	// 輝度1での明るさを確認するため
+	{ 0xFF, 100, },	// 輝度100での明るさを確認するため
+	{ 0xFF, 0, },	// 直前が100でも消灯することを確認するため
 	{ 0x00, 0, },
 	{ 0x00, 0, },
 	{ 0x00, 0, },
@@ -112,14 +112,10 @@ void light_move_to_next_pos_callback(void)
 	
 	shift_data[0] = bit_table[light_cur_pos];
 	shift_data[1] = light[light_cur_pos].data;
-
-
-	PIN_RCK = 0;
 	
 	R_CSI01_Send(shift_data, sizeof(shift_data));
 
 	set_pwm_duty(light[light_cur_pos].brightness);
-	
 	
 	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
 }
@@ -133,32 +129,27 @@ void light_update_shift_register_callback(void)
 {
 	// RCKは立ち上がりで反映
 	PIN_RCK = 1;
-	
+	PIN_RCK = 0;
+	/***/
+	DEBUG_PIN = 0;
+	/***/
 	R_TAU0_Channel0_Set_SoftwareTriggerOn();
 }
 
 /**
  * PWM出力のデューティ比(0-100)を設定する。
  *
- * ★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
- * TODO: 以下はPWM時のコメント！
- *       使用タイマを1個ふやしてから別のにしたので消すっこと！！
- * ★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
- * デューティ出力は次のタイマ割り込みから有効にあることに注意。
- * 詳細は、p.191「6.9.3 PWM出力機能としての動作」参照。
+ * ワンショット・パルス機能を使用して実現する。
  */
 static void set_pwm_duty(uint8_t duty)
 {
-	uint16_t off_timing;
 	uint8_t new_tdr01h, new_tdr01l;
+	uint16_t tdr_duty_100 = (_9B_TAU_TDR01H_VALUE << 8) | _78_TAU_TDR01L_VALUE;
+	uint16_t tdr_duty_x = (uint16_t)((uint32_t)tdr_duty_100 * duty / 100);
 	
 	// TDR0nH→TDR0nLの順番に連続で書き込む必要がある
-	uint32_t temp;
-
-	temp = (uint32_t)0x9470 * duty;
-	off_timing = (uint16_t)(temp / 100);
-	new_tdr01h = (uint8_t)((off_timing & 0xFF00) >> 8);
-	new_tdr01l = (uint8_t)(off_timing & 0x00FF);
+	new_tdr01h = (uint8_t)((tdr_duty_x & 0xFF00) >> 8);
+	new_tdr01l = (uint8_t)(tdr_duty_x & 0x00FF);
 	TDR01H = new_tdr01h;
 	TDR01L = new_tdr01l;
 }
