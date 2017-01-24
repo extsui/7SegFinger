@@ -26,7 +26,7 @@ typedef struct {
 /** 点灯中データ情報 */
 static light_t light[NUM_OF_7SEG] = {
 	{ 0x60, 100, },
-	{ 0xDA, 6, }, // TODO: 最低輝度は保証したい。つまり、輝度=1でも薄暗く表示はしておきたい。
+	{ 0xDA, 1, }, // TODO: 最低輝度は保証したい。つまり、輝度=1でも薄暗く表示はしておきたい。
 	{ 0xF2, 0, }, //		TDR更新前にタイマ1止めて、TDR更新後にタイマスタートで実現可能？
 	{ 0xFE, 0, },
 	{ 0xFE, 0, },
@@ -36,10 +36,21 @@ static light_t light[NUM_OF_7SEG] = {
 };
 
 /** 更新用データ情報 */
-static light_t latch[NUM_OF_7SEG];
+static light_t latch[NUM_OF_7SEG] = {
+	{ 0xFF, 100, },
+	{ 0xFF, 1, },
+	{ 0xFF, 0, },
+	{ 0x00, 0, },
+	{ 0x00, 0, },
+	{ 0x00, 0, },
+	{ 0x00, 0, },
+	{ 0x00, 0, },
+};
 
 /** 現在の点灯箇所 */
 static int light_cur_pos;
+
+static void set_pwm_duty(uint8_t duty);
 
 /**
  * 点灯部の初期化
@@ -53,7 +64,8 @@ void light_init(void)
 	light_cur_pos = 0;
 	
 	R_CSI01_Start();
-	R_TAU0_Channel0_Start();
+	R_TAU0_Channel0_Start();	// 輝度用タイマ
+	R_TAU0_Channel2_Start();	// 表示更新用タイマ
 }
 
 /**
@@ -97,15 +109,18 @@ void light_move_to_next_pos_callback(void)
 	static const uint8_t bit_table[] = {
 		0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,
 	};
-
+	
 	shift_data[0] = bit_table[light_cur_pos];
 	shift_data[1] = light[light_cur_pos].data;
 
+
+	PIN_RCK = 0;
+	
 	R_CSI01_Send(shift_data, sizeof(shift_data));
 
-	// TODO: WORKAROUND:
-	// なんでlight_update_callback()の最後に持っていったら輝度が1周期分ずれるかわからん。
-	// ぶっちゃけコールバックの呼び出し順序がわかってない。
+	set_pwm_duty(light[light_cur_pos].brightness);
+	
+	
 	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
 }
 
@@ -116,23 +131,34 @@ void light_move_to_next_pos_callback(void)
  */
 void light_update_shift_register_callback(void)
 {
+	// RCKは立ち上がりで反映
+	PIN_RCK = 1;
+	
+	R_TAU0_Channel0_Set_SoftwareTriggerOn();
+}
+
+/**
+ * PWM出力のデューティ比(0-100)を設定する。
+ *
+ * ★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
+ * TODO: 以下はPWM時のコメント！
+ *       使用タイマを1個ふやしてから別のにしたので消すっこと！！
+ * ★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆★☆
+ * デューティ出力は次のタイマ割り込みから有効にあることに注意。
+ * 詳細は、p.191「6.9.3 PWM出力機能としての動作」参照。
+ */
+static void set_pwm_duty(uint8_t duty)
+{
 	uint16_t off_timing;
 	uint8_t new_tdr01h, new_tdr01l;
 	
 	// TDR0nH→TDR0nLの順番に連続で書き込む必要がある
 	uint32_t temp;
 
-	DI();
-	
-	temp = (uint32_t)0x9C40 * light[light_cur_pos].brightness;
+	temp = (uint32_t)0x9470 * duty;
 	off_timing = (uint16_t)(temp / 100);
 	new_tdr01h = (uint8_t)((off_timing & 0xFF00) >> 8);
 	new_tdr01l = (uint8_t)(off_timing & 0x00FF);
 	TDR01H = new_tdr01h;
 	TDR01L = new_tdr01l;
-	
-	EI();
-	
-	PIN_RCK = 1;
-	PIN_RCK = 0;
 }

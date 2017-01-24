@@ -78,30 +78,41 @@ void R_TAU0_Create(void)
     /* Mask channel 3 higher 8 bits interrupt */
     TMMK03H = 1U;    /* disable INTTM03H interrupt */
     TMIF03H = 0U;    /* clear INTTM03H interrupt flag */
-    /* Set INTTM00 low priority */
-    TMPR100 = 1U;
-    TMPR000 = 1U;
-    /* Channel 0 is used as master channel for PWM output function */
+    /* Set INTTM02 low priority */
+    TMPR102 = 1U;
+    TMPR002 = 1U;
+    /* Channel 0 is used as master channel for oneshot output function */
     TMR00H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_TRIGGER_SOFTWARE;
-    TMR00L = _01_TAU_MODE_PWM_MASTER;
+    TMR00L = _08_TAU_MODE_ONESHOT;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR00H = _9C_TAU_TDR00H_VALUE;
-    TDR00L = _3F_TAU_TDR00L_VALUE;
+    TDR00H = _00_TAU_TDR00H_VALUE;
+    TDR00L = _00_TAU_TDR00L_VALUE;
     TO0 &= (uint8_t)~_01_TAU_CH0_OUTPUT_VALUE_1;
     TOE0 &= (uint8_t)~_01_TAU_CH0_OUTPUT_ENABLE;
-    /* Channel 1 is used as slave channel for PWM output function */
+    /* Channel 1 is used as slave channel for oneshot output function */
     TMR01H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | 
              _04_TAU_TRIGGER_MASTER_INT;
-    TMR01L = _09_TAU_MODE_PWM_SLAVE;
+    TMR01L = _08_TAU_MODE_ONESHOT;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR01H = _9C_TAU_TDR01H_VALUE;
-    TDR01L = _40_TAU_TDR01L_VALUE;
+    TDR01H = _94_TAU_TDR01H_VALUE;
+    TDR01L = _70_TAU_TDR01L_VALUE;
     TOM0 |= _02_TAU_CH1_OUTPUT_COMBIN;
     TOL0 |= _02_TAU_CH1_OUTPUT_LEVEL_L;
     TO0 |= _02_TAU_CH1_OUTPUT_VALUE_1;
     TOE0 |= _02_TAU_CH1_OUTPUT_ENABLE;
+    /* Channel 2 used as interval timer */
+    TMR02H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | _00_TAU_TRIGGER_SOFTWARE;
+    TMR02L = _00_TAU_MODE_INTERVAL_TIMER | _00_TAU_START_INT_UNUSED;
+    /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
+    registers must be performed in the state where an interrupt is disabled by the DI instruction. */
+    TDR02H = _9C_TAU_TDR02H_VALUE;
+    TDR02L = _3F_TAU_TDR02L_VALUE;
+    TOM0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_COMBIN;
+    TOL0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_LEVEL_L;
+    TO0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_VALUE_1;
+    TOE0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_ENABLE;
     /* Set TO01 pin */
     PMC0 &= 0xEFU;
     P0 &= 0xEFU;
@@ -115,8 +126,6 @@ void R_TAU0_Create(void)
 ***********************************************************************************************************************/
 void R_TAU0_Channel0_Start(void)
 {
-    TMIF00 = 0U;    /* clear INTTM00 interrupt flag */
-    TMMK00 = 0U;    /* enable INTTM00 interrupt */
     TOE0 |= _02_TAU_CH1_OUTPUT_ENABLE;
     TS0 |= _01_TAU_CH0_START_TRG_ON | _02_TAU_CH1_START_TRG_ON;
 }
@@ -130,9 +139,41 @@ void R_TAU0_Channel0_Stop(void)
 {
     TT0 |= _01_TAU_CH0_STOP_TRG_ON | _02_TAU_CH1_STOP_TRG_ON;
     TOE0 &= (uint8_t)~_02_TAU_CH1_OUTPUT_ENABLE;
-    /* Mask channel 0 interrupt */
-    TMMK00 = 1U;    /* disable INTTM00 interrupt */
-    TMIF00 = 0U;    /* clear INTTM00 interrupt flag */
+}
+/***********************************************************************************************************************
+* Function Name: R_TAU0_Channel0_Set_SoftwareTriggerOn
+* Description  : This function generates software trigger for One-shot output function.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_TAU0_Channel0_Set_SoftwareTriggerOn(void)
+{
+    TS0 |= _01_TAU_CH0_START_TRG_ON;
+}
+/***********************************************************************************************************************
+* Function Name: R_TAU0_Channel2_Start
+* Description  : This function starts TAU0 channel 2 counter.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_TAU0_Channel2_Start(void)
+{
+    TMIF02 = 0U;    /* clear INTTM02 interrupt flag */
+    TMMK02 = 0U;    /* enable INTTM02 interrupt */
+    TS0 |= _04_TAU_CH2_START_TRG_ON;
+}
+/***********************************************************************************************************************
+* Function Name: R_TAU0_Channel2_Stop
+* Description  : This function stops TAU0 channel 2 counter.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_TAU0_Channel2_Stop(void)
+{
+    TT0 |= _04_TAU_CH2_STOP_TRG_ON;
+    /* Mask channel 2 interrupt */
+    TMMK02 = 1U;    /* disable INTTM02 interrupt */
+    TMIF02 = 0U;    /* clear INTTM02 interrupt flag */
 }
 
 /* Start user code for adding. Do not edit comment generated here */

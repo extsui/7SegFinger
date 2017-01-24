@@ -287,16 +287,23 @@ Macro definitions (Register bit)
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-/* 16-bit timer data register 00 (TDR00) */
-#define _3F_TAU_TDR00L_VALUE                    (0x3FU)
-#define _9C_TAU_TDR00H_VALUE                    (0x9CU)
-/* 16-bit timer data register 01 (TDR01) */
-#define _40_TAU_TDR01L_VALUE                    (0x40U)
-#define _9C_TAU_TDR01H_VALUE                    (0x9CU)
+/* 16-bit timer data register 00 (TDR00H) */
+#define _00_TAU_TDR00H_VALUE                   (0x00U)
+/* 16-bit timer data register 00 (TDR00L) */
+#define _00_TAU_TDR00L_VALUE                   (0x00U)
+/* 16-bit timer data register 01 (TDR01H) */
+#define _94_TAU_TDR01H_VALUE                   (0x94U)
+/* 16-bit timer data register 01 (TDR01L) */
+#define _70_TAU_TDR01L_VALUE                   (0x70U)
 /* Clock divisor for TAU0 channel 0 */
 #define TAU0_CHANNEL0_DIVISOR                   (1U)      /* fCLK */
 /* Clock divisor for TAU0 channel 1 */
 #define TAU0_CHANNEL1_DIVISOR                   (1U)      /* fCLK */
+/* 16-bit timer data register 02 (TDR02) */
+#define _3F_TAU_TDR02L_VALUE                    (0x3FU)
+#define _9C_TAU_TDR02H_VALUE                    (0x9CU)
+/* Clock divisor for TAU0 channel 2 */
+#define TAU0_CHANNEL2_DIVISOR                   (1U)      /* fCLK */
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -308,6 +315,9 @@ Global functions
 void R_TAU0_Create(void);
 void R_TAU0_Channel0_Start(void);
 void R_TAU0_Channel0_Stop(void);
+void R_TAU0_Channel0_Set_SoftwareTriggerOn(void);
+void R_TAU0_Channel2_Start(void);
+void R_TAU0_Channel2_Stop(void);
 
 /* Start user code for function. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
