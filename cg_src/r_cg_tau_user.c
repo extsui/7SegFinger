@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for TAU module.
-* Creation Date: 2017/01/24
+* Creation Date: 2017/01/30
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -40,6 +40,7 @@ Includes
 Pragma directive
 ***********************************************************************************************************************/
 #pragma interrupt r_tau0_channel2_interrupt(vect=INTTM02)
+#pragma interrupt r_tau0_channel3_interrupt(vect=INTTM03)
 /* Start user code for pragma. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 
@@ -60,6 +61,17 @@ static void __near r_tau0_channel2_interrupt(void)
     /* Start user code. Do not edit comment generated here */
 	DEBUG_PIN = 1;
 	light_move_to_next_pos_callback();
+    /* End user code. Do not edit comment generated here */
+}
+/***********************************************************************************************************************
+* Function Name: r_tau0_channel3_interrupt
+* Description  : This function INTTM03 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void __near r_tau0_channel3_interrupt(void)
+{
+    /* Start user code. Do not edit comment generated here */
     /* End user code. Do not edit comment generated here */
 }
 

@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements main function.
-* Creation Date: 2017/01/24
+* Creation Date: 2017/01/30
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -38,6 +38,8 @@ Includes
 #include "r_cg_intp.h"
 /* Start user code for include. Do not edit comment generated here */
 #include "com.h"
+
+#include "light.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -51,6 +53,8 @@ Pragma directive
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
+#define MODE0	(P12_bit.no1)
+#define MODE1	(P12_bit.no2)
 /* End user code. Do not edit comment generated here */
 
 static void R_MAIN_UserInit(void);
@@ -66,6 +70,19 @@ void main(void)
     /* Start user code. Do not edit comment generated here */
 	while (1U)
     {
+		// MODE[1:0]の値を2桁目の7セグに表示する
+		static uint8_t data[NUM_OF_7SEG] = {
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		};
+		static const uint8_t num_to_pattern[] = {
+			0xFC, 0x60, 0xDA, 0xF2,
+		};
+		// 負論理
+		uint8_t mode = ((MODE1<<1) | MODE0) & 0x03;
+		mode ^= 0x03;
+		data[1] = num_to_pattern[mode];
+		light_set_data(data);
+		
 		R_WDT_Restart();
     }
     /* End user code. Do not edit comment generated here */

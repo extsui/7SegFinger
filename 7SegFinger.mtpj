@@ -632,7 +632,7 @@ cg_src
       <LinkOptionRrm-DefaultValue>False</LinkOptionRrm-DefaultValue>
       <LinkOptionRrmValue-DefaultValue />
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8587163371012804777</TimeTagModified--0>
+      <TimeTagModified--0>-8587161669779229144</TimeTagModified--0>
       <LinkOptionAutoSectionLayout-0>True</LinkOptionAutoSectionLayout-0>
       <LinkOptionCpu-0>False</LinkOptionCpu-0>
       <LinkOptionDebug-0>Debug</LinkOptionDebug-0>
@@ -1755,11 +1755,11 @@ cg_src
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="PinNumber_5"&gt;
-        &lt;DataElement key="InusedAs" value=""&gt;
+        &lt;DataElement key="InusedAs" value="Port12##P122"&gt;
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="PinNumber_6"&gt;
-        &lt;DataElement key="InusedAs" value=""&gt;
+        &lt;DataElement key="InusedAs" value="Port12##P121"&gt;
         &lt;/DataElement&gt;
       &lt;/SerializableData&gt;
       &lt;SerializableData name="PinNumber_7"&gt;
@@ -2590,7 +2590,7 @@ cg_src
           &lt;/DataElement&gt;
           &lt;DataElement key="error" value="NoError"&gt;
           &lt;/DataElement&gt;
-          &lt;DataElement key="inuse" value="Unused"&gt;
+          &lt;DataElement key="inuse" value="Used"&gt;
           &lt;/DataElement&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="port13"&gt;
@@ -4629,12 +4629,18 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="FunctionName" value="P122"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="False"&gt;
+            &lt;DataElement key="InUse" value="True"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="FunctionIO" value="None"&gt;
+            &lt;DataElement key="FunctionIO" value="I"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="FunctionState" value="0"&gt;
             &lt;/DataElement&gt;
+            &lt;SerializableData name="InUsePins"&gt;
+              &lt;SerializableData name="CG"&gt;
+                &lt;DataElement key="0" value="5"&gt;
+                &lt;/DataElement&gt;
+              &lt;/SerializableData&gt;
+            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="P121"&gt;
@@ -4645,12 +4651,18 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="FunctionName" value="P121"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="False"&gt;
+            &lt;DataElement key="InUse" value="True"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="FunctionIO" value="None"&gt;
+            &lt;DataElement key="FunctionIO" value="I"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="FunctionState" value="0"&gt;
             &lt;/DataElement&gt;
+            &lt;SerializableData name="InUsePins"&gt;
+              &lt;SerializableData name="CG"&gt;
+                &lt;DataElement key="0" value="6"&gt;
+                &lt;/DataElement&gt;
+              &lt;/SerializableData&gt;
+            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="P00"&gt;
@@ -5651,7 +5663,7 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="PinNumber" value="5"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="False"&gt;
+            &lt;DataElement key="InUse" value="True"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="PinIoDirty" value="True"&gt;
             &lt;/DataElement&gt;
@@ -5663,6 +5675,10 @@ cg_src
             &lt;/DataElement&gt;
             &lt;DataElement key="PinDlvDirty" value="False"&gt;
             &lt;/DataElement&gt;
+            &lt;SerializableData name="InUseFunctions"&gt;
+              &lt;DataElement key="0" value="P122"&gt;
+              &lt;/DataElement&gt;
+            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="6"&gt;
@@ -5673,7 +5689,7 @@ cg_src
           &lt;SerializableData name="ClassContent"&gt;
             &lt;DataElement key="PinNumber" value="6"&gt;
             &lt;/DataElement&gt;
-            &lt;DataElement key="InUse" value="False"&gt;
+            &lt;DataElement key="InUse" value="True"&gt;
             &lt;/DataElement&gt;
             &lt;DataElement key="PinIoDirty" value="True"&gt;
             &lt;/DataElement&gt;
@@ -5685,6 +5701,10 @@ cg_src
             &lt;/DataElement&gt;
             &lt;DataElement key="PinDlvDirty" value="False"&gt;
             &lt;/DataElement&gt;
+            &lt;SerializableData name="InUseFunctions"&gt;
+              &lt;DataElement key="0" value="P121"&gt;
+              &lt;/DataElement&gt;
+            &lt;/SerializableData&gt;
           &lt;/SerializableData&gt;
         &lt;/SerializableData&gt;
         &lt;SerializableData name="12"&gt;
@@ -6827,11 +6847,11 @@ cg_src
       &lt;SerializableData name="Port12"&gt;
         &lt;SerializableData name="P121"&gt;
           &lt;SerializableData name="MODULE_UNUSED"&gt;
-            &lt;DataElement key="Checked" value="True"&gt;
+            &lt;DataElement key="Checked" value="False"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="INPUT_MODE"&gt;
-            &lt;DataElement key="Checked" value="False"&gt;
+            &lt;DataElement key="Checked" value="True"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="OUTPUT_MODE"&gt;
@@ -6857,11 +6877,11 @@ cg_src
         &lt;/SerializableData&gt;
         &lt;SerializableData name="P122"&gt;
           &lt;SerializableData name="MODULE_UNUSED"&gt;
-            &lt;DataElement key="Checked" value="True"&gt;
+            &lt;DataElement key="Checked" value="False"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="INPUT_MODE"&gt;
-            &lt;DataElement key="Checked" value="False"&gt;
+            &lt;DataElement key="Checked" value="True"&gt;
             &lt;/DataElement&gt;
           &lt;/SerializableData&gt;
           &lt;SerializableData name="OUTPUT_MODE"&gt;

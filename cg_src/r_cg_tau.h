@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements device driver for TAU module.
-* Creation Date: 2017/01/24
+* Creation Date: 2017/01/30
 ***********************************************************************************************************************/
 #ifndef TAU_H
 #define TAU_H
@@ -304,6 +304,11 @@ Macro definitions
 #define _9C_TAU_TDR02H_VALUE                    (0x9CU)
 /* Clock divisor for TAU0 channel 2 */
 #define TAU0_CHANNEL2_DIVISOR                   (1U)      /* fCLK */
+/* 16-bit timer data register 03 (TDR03) */
+#define _1F_TAU_TDR03L_VALUE                    (0x1FU)
+#define _4E_TAU_TDR03H_VALUE                    (0x4EU)
+/* Clock divisor for TAU0 channel 3 */
+#define TAU0_CHANNEL3_DIVISOR                   (1U)      /* fCLK */
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -318,6 +323,8 @@ void R_TAU0_Channel0_Stop(void);
 void R_TAU0_Channel0_Set_SoftwareTriggerOn(void);
 void R_TAU0_Channel2_Start(void);
 void R_TAU0_Channel2_Stop(void);
+void R_TAU0_Channel3_Start(void);
+void R_TAU0_Channel3_Stop(void);
 
 /* Start user code for function. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
