@@ -68,20 +68,38 @@ void main(void)
 {
     R_MAIN_UserInit();
     /* Start user code. Do not edit comment generated here */
+	R_TAU0_Channel3_Start();
 	while (1U)
     {
-		// MODE[1:0]の値を2桁目の7セグに表示する
-		static uint8_t data[NUM_OF_7SEG] = {
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		};
+		static uint32_t count = 0;
+		static uint8_t data[NUM_OF_7SEG] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
+		static uint8_t brightness[NUM_OF_7SEG] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, };
 		static const uint8_t num_to_pattern[] = {
-			0xFC, 0x60, 0xDA, 0xF2,
+    		0xfc, /* 0 */
+    		0x60, /* 1 */
+    		0xda, /* 2 */
+    		0xf2, /* 3 */
+    		0x66, /* 4 */
+    		0xb6, /* 5 */
+    		0xbe, /* 6 */
+    		0xe4, /* 7 */
+    		0xfe, /* 8 */
+    		0xf6, /* 9 */
 		};
 		// 負論理
-		uint8_t mode = ((MODE1<<1) | MODE0) & 0x03;
-		mode ^= 0x03;
-		data[1] = num_to_pattern[mode];
+		data[0] = num_to_pattern[count / 100 % 10];
+		data[1] = num_to_pattern[count / 10 % 10];
+		data[2] = num_to_pattern[count / 1 % 10];
 		light_set_data(data);
+		light_set_brightness(brightness);
+		count++;		
+		
+		{
+		volatile long i;
+		for (i = 0; i < 5000; i++)
+			;
+		}
+		
 		
 		R_WDT_Restart();
     }
