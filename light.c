@@ -14,6 +14,12 @@
 #include "light.h"
 #include <string.h>
 
+#pragma interrupt r_csi01_interrupt(vect=INTCSI01)
+#pragma interrupt r_tau0_channel2_interrupt(vect=INTTM02)
+
+static void light_move_to_next_pos_callback(void);
+static void light_update_shift_register_callback(void);
+
 #define PIN_nSCLR	(P0_bit.no3)
 #define PIN_RCK		(P0_bit.no6)
 
@@ -152,4 +158,66 @@ static void set_pwm_duty(uint8_t duty)
 	new_tdr01l = (uint8_t)(tdr_duty_x & 0x00FF);
 	TDR01H = new_tdr01h;
 	TDR01L = new_tdr01l;
+}
+
+/***********************************************************************************************************************
+* Function Name: r_tau0_channel2_interrupt
+* Description  : This function INTTM02 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void __near r_tau0_channel2_interrupt(void)
+{
+    /* Start user code. Do not edit comment generated here */
+	DEBUG_PIN = 1;
+	light_move_to_next_pos_callback();
+    /* End user code. Do not edit comment generated here */
+}
+
+extern volatile uint8_t * gp_csi01_rx_address;         /* csi01 receive buffer address */
+extern volatile uint16_t  g_csi01_rx_length;           /* csi01 receive data length */
+extern volatile uint16_t  g_csi01_rx_count;            /* csi01 receive data count */
+extern volatile uint8_t * gp_csi01_tx_address;         /* csi01 send buffer address */
+extern volatile uint16_t  g_csi01_send_length;         /* csi01 send data length */
+extern volatile uint16_t  g_csi01_tx_count;            /* csi01 send data count */
+
+/***********************************************************************************************************************
+* Function Name: r_csi01_callback_sendend
+* Description  : This function is a callback function when CSI01 finishes transmission.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void r_csi01_callback_sendend(void)
+{
+    /* Start user code. Do not edit comment generated here */
+	light_update_shift_register_callback();
+    /* End user code. Do not edit comment generated here */
+}
+
+/***********************************************************************************************************************
+* Function Name: r_csi01_interrupt
+* Description  : None
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void __near r_csi01_interrupt(void)
+{
+    volatile uint8_t err_type;
+
+    err_type = (uint8_t)(SSR01 & _01_SAU_OVERRUN_ERROR);
+    SIR01 = (uint8_t)err_type;
+
+    if (err_type != 1U)
+    {
+        if (g_csi01_tx_count > 0U)
+        {
+            SIO01 = *gp_csi01_tx_address;
+            gp_csi01_tx_address++;
+            g_csi01_tx_count--;
+        }
+        else
+        {
+            r_csi01_callback_sendend();    /* complete send */
+        }
+    }
 }

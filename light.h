@@ -13,8 +13,4 @@ void light_set_data(const uint8_t data[]);
 void light_set_brightness(const uint8_t brightness[]);
 void light_update(void);
 
-// ˆÈ‰º‚ÌŠÖ”‚Ír_cg_*.cˆÈŠO‚©‚çŒÄ‚Ño‚³‚È‚¢‚±‚ÆI
-void light_move_to_next_pos_callback(void);
-void light_update_shift_register_callback(void);
-
 #endif /* LIGHT_H */

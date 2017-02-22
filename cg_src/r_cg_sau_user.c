@@ -32,116 +32,17 @@ Includes
 #include "r_cg_macrodriver.h"
 #include "r_cg_sau.h"
 /* Start user code for include. Do not edit comment generated here */
-#include "com.h"
-#include "light.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
 /***********************************************************************************************************************
 Pragma directive
 ***********************************************************************************************************************/
-#pragma interrupt r_csi00_interrupt(vect=INTCSI00)
-#pragma interrupt r_csi01_interrupt(vect=INTCSI01)
 /* Start user code for pragma. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
 Global variables and functions
 ***********************************************************************************************************************/
-extern volatile uint8_t * gp_csi00_rx_address;         /* csi00 receive buffer address */
-extern volatile uint16_t  g_csi00_rx_length;           /* csi00 receive data length */
-extern volatile uint16_t  g_csi00_rx_count;            /* csi00 receive data count */
-extern volatile uint8_t * gp_csi00_tx_address;         /* csi00 send buffer address */
-extern volatile uint16_t  g_csi00_send_length;         /* csi00 send data length */
-extern volatile uint16_t  g_csi00_tx_count;            /* csi00 send data count */
-extern volatile uint8_t * gp_csi01_rx_address;         /* csi01 receive buffer address */
-extern volatile uint16_t  g_csi01_rx_length;           /* csi01 receive data length */
-extern volatile uint16_t  g_csi01_rx_count;            /* csi01 receive data count */
-extern volatile uint8_t * gp_csi01_tx_address;         /* csi01 send buffer address */
-extern volatile uint16_t  g_csi01_send_length;         /* csi01 send data length */
-extern volatile uint16_t  g_csi01_tx_count;            /* csi01 send data count */
 /* Start user code for global. Do not edit comment generated here */
-/* End user code. Do not edit comment generated here */
-
-/***********************************************************************************************************************
-* Function Name: r_csi00_interrupt
-* Description  : None
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void __near r_csi00_interrupt(void)
-{
-    volatile uint8_t err_type;
-
-    err_type = (uint8_t)(SSR00 & _01_SAU_OVERRUN_ERROR);
-    SIR00 = (uint8_t)err_type;
-
-    if (err_type != 1U)
-    {
-        if (g_csi00_rx_count < g_csi00_rx_length)
-        {
-            *gp_csi00_rx_address = SIO00;
-            gp_csi00_rx_address++;
-            g_csi00_rx_count++;
-
-            if (g_csi00_rx_count == g_csi00_rx_length)
-            {
-                r_csi00_callback_receiveend();    /* complete receive */
-            }
-        }
-    }
-}
-/***********************************************************************************************************************
-* Function Name: r_csi00_callback_receiveend
-* Description  : This function is a callback function when CSI00 finishes reception.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void r_csi00_callback_receiveend(void)
-{
-    /* Start user code. Do not edit comment generated here */
-	com_received_callback();
-    /* End user code. Do not edit comment generated here */
-}
-/***********************************************************************************************************************
-* Function Name: r_csi01_interrupt
-* Description  : None
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void __near r_csi01_interrupt(void)
-{
-    volatile uint8_t err_type;
-
-    err_type = (uint8_t)(SSR01 & _01_SAU_OVERRUN_ERROR);
-    SIR01 = (uint8_t)err_type;
-
-    if (err_type != 1U)
-    {
-        if (g_csi01_tx_count > 0U)
-        {
-            SIO01 = *gp_csi01_tx_address;
-            gp_csi01_tx_address++;
-            g_csi01_tx_count--;
-        }
-        else
-        {
-            r_csi01_callback_sendend();    /* complete send */
-        }
-    }
-}
-/***********************************************************************************************************************
-* Function Name: r_csi01_callback_sendend
-* Description  : This function is a callback function when CSI01 finishes transmission.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void r_csi01_callback_sendend(void)
-{
-    /* Start user code. Do not edit comment generated here */
-	light_update_shift_register_callback();
-    /* End user code. Do not edit comment generated here */
-}
-
-/* Start user code for adding. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
