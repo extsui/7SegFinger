@@ -10,6 +10,8 @@
 #include "light.h"
 #include "demo.h"
 
+#include <string.h>
+
 #define MODE0	(P12_bit.no1)
 #define MODE1	(P12_bit.no2)
 
@@ -39,13 +41,33 @@ void demo_init(void)
 
 void demo_cycle_proc(void)
 {
-	demo_base_count++;
-		
+	//demo_base_count++;
+	demo_base_count = 888888888;
+	/*
 	// 負論理
 	data[0] = num_to_pattern[demo_base_count / 100 % 10];
 	data[1] = num_to_pattern[demo_base_count / 10 % 10];
 	data[2] = num_to_pattern[demo_base_count / 1 % 10];
+	*/
+
+	memset(data, num_to_pattern[8], 8);
+	
+	// 除算命令が無いので、以下の1行に約140usかかる
+	data[0] = num_to_pattern[demo_base_count / 10000000 % 10];
+	data[1] = num_to_pattern[demo_base_count / 1000000 % 10];
+/*	data[2] = num_to_pattern[demo_base_count / 100000 % 10];
+	data[3] = num_to_pattern[demo_base_count / 10000 % 10];
+	data[4] = num_to_pattern[demo_base_count / 1000 % 10];
+	data[5] = num_to_pattern[demo_base_count / 100 % 10];
+	data[6] = num_to_pattern[demo_base_count / 10 % 10];
+	data[7] = num_to_pattern[demo_base_count / 1 % 10];
+*/
 	
 	light_set_data(data);
 	light_set_brightness(brightness);
+	
+	// 本来は外部からのLATCH信号で更新するが、
+	// デモなので内部から更新する。
+	light_update();
+	DEBUG_PIN = 0;
 }

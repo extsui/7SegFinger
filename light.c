@@ -119,6 +119,12 @@ void light_move_to_next_pos_callback(void)
 	shift_data[0] = bit_table[light_cur_pos];
 	shift_data[1] = light[light_cur_pos].data;
 	
+	// アノードコモンの場合、以下を有効にすること
+	#define ANODE_COMMON (1)
+	#if ANODE_COMMON
+		shift_data[1] = ~shift_data[1];
+	#endif
+	
 	R_CSI01_Send(shift_data, sizeof(shift_data));
 
 	set_pwm_duty(light[light_cur_pos].brightness);
@@ -136,9 +142,6 @@ void light_update_shift_register_callback(void)
 	// RCKは立ち上がりで反映
 	PIN_RCK = 1;
 	PIN_RCK = 0;
-	/***/
-	DEBUG_PIN = 0;
-	/***/
 	R_TAU0_Channel0_Set_SoftwareTriggerOn();
 }
 
@@ -169,7 +172,6 @@ static void set_pwm_duty(uint8_t duty)
 static void __near r_tau0_channel2_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	DEBUG_PIN = 1;
 	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
 }
