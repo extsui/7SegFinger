@@ -15,10 +15,12 @@
 #define MODE0	(P12_bit.no1)
 #define MODE1	(P12_bit.no2)
 
+#define SCROLL_DELAY_MS	(200)	// スクロール遅延ミリ秒
+
 static uint32_t demo_base_count;
 
 static uint8_t data[NUM_OF_7SEG] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
-static uint8_t brightness[NUM_OF_7SEG] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, };
+static uint8_t brightness[NUM_OF_7SEG] = { 100, 100, 100, 100, 100, 100, 100, 100, };
 static const uint8_t num_to_pattern[] = {
 	0xfc, /* 0 */
 	0x60, /* 1 */
@@ -39,29 +41,52 @@ void demo_init(void)
 	demo_base_count = 0;
 }
 
+static uint8_t banner[] = {
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	
+	0xe4, /* 7 */
+	0xb6, /* S */
+	0x9e, /* E */
+	0xbc, /* G */
+	0x10, /* _ */
+	0x8e, /* F */
+	0x60, /* I */
+	0xec, /* N */
+	0xbc, /* G */
+	0x9e, /* E */
+	0xef, /* R */
+	
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+};
+
 void demo_cycle_proc(void)
 {
-	//demo_base_count++;
-	demo_base_count = 888888888;
-	/*
-	// 負論理
-	data[0] = num_to_pattern[demo_base_count / 100 % 10];
-	data[1] = num_to_pattern[demo_base_count / 10 % 10];
-	data[2] = num_to_pattern[demo_base_count / 1 % 10];
-	*/
-
-	memset(data, num_to_pattern[8], 8);
+	static int pos = 0;
 	
-	// 除算命令が無いので、以下の1行に約140usかかる
-	data[0] = num_to_pattern[demo_base_count / 10000000 % 10];
-	data[1] = num_to_pattern[demo_base_count / 1000000 % 10];
-/*	data[2] = num_to_pattern[demo_base_count / 100000 % 10];
-	data[3] = num_to_pattern[demo_base_count / 10000 % 10];
-	data[4] = num_to_pattern[demo_base_count / 1000 % 10];
-	data[5] = num_to_pattern[demo_base_count / 100 % 10];
-	data[6] = num_to_pattern[demo_base_count / 10 % 10];
-	data[7] = num_to_pattern[demo_base_count / 1 % 10];
-*/
+	demo_base_count++;
+
+	if (demo_base_count % SCROLL_DELAY_MS == 0) {
+		pos++;
+		if (pos == ((sizeof(banner) / sizeof(banner[0])) - 8 + 1)) {
+			pos = 0;
+		}
+	}
+	
+	memcpy(data, &banner[pos], sizeof(data));
 	
 	light_set_data(data);
 	light_set_brightness(brightness);
@@ -69,5 +94,4 @@ void demo_cycle_proc(void)
 	// 本来は外部からのLATCH信号で更新するが、
 	// デモなので内部から更新する。
 	light_update();
-	DEBUG_PIN = 0;
 }
