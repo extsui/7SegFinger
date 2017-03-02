@@ -24,10 +24,24 @@
 #define SCROLL_DELAY_MS	(200)	// スクロール遅延ミリ秒
 
 static uint8_t get_mode(void);
-static void brightness_max_and_all_light_demo(void);
-static void controll_brightness_demo(void);
-static void presentation_demo(void);
 static void nop(void);
+static void update(void);
+
+static void brightness_max_and_turn_on_all(void);
+static void brightness_min_and_turn_off_all(void);
+static void controll_brightness_demo(void);
+static void presentation_demo_init(void);
+static void presentation_demo(void);
+
+typedef void (*action_t)(void);
+
+/**
+ * 状態用のアクション構造体
+ */
+typedef struct {
+	action_t entry;	/**< 状態に入った時のアクション */
+	action_t proc;	/**< 状態の中で1ms毎に呼び出されるアクション */
+} state_action_t;
 
 /**
  * 動作テーブル
@@ -41,15 +55,14 @@ static void nop(void);
  *  11  | 外部制御モード
  * -----+----------------------
  */
-typedef void (*action_t)(void);
-static const action_t action_table[] = {
-	brightness_max_and_all_light_demo,
-	controll_brightness_demo,
-	presentation_demo,
-	nop,
+static const state_action_t state_table[] = {
+	{ brightness_max_and_turn_on_all,	nop,						},
+	{ nop,								controll_brightness_demo,	},
+	{ presentation_demo_init,			presentation_demo,			},
+	{ brightness_min_and_turn_off_all,	nop,						},
 };
 
-static uint32_t demo_base_count;
+static uint32_t demo_base_count = 0;
 
 static uint8_t cur_mode = 0;
 
@@ -87,8 +100,8 @@ void mode_init(void)
  */
 void mode_proc(void)
 {
+	state_table[cur_mode].proc();
 	demo_base_count++;
-	action_table[cur_mode]();
 }
 
 /**
@@ -103,6 +116,7 @@ void mode_update(void)
 	if (cur_mode != new_mode) {
 		cur_mode = new_mode;
 		demo_base_count = 0;
+		state_table[cur_mode].entry();
 	}
 }
 
@@ -112,53 +126,51 @@ void mode_update(void)
 
 static uint8_t get_mode(void)
 {
-	return ((MODE1<<1) | MODE0);
+	uint8_t mode = ((MODE1<<1) | MODE0);
+	return mode;
 }
 
-static uint8_t banner[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
+static void nop(void)
+{
+	/* 何もしない */
+}
+
+/**
+ * 現状のデータと輝度で表示を更新する。
+ */
+static void update(void)
+{
+	light_set_data(data);
+	light_set_brightness(brightness);
 	
-	0xe4, /* 7 */
-	0xb6, /* S */
-	0x9e, /* E */
-	0xbc, /* G */
-	0x10, /* _ */
-	0x8e, /* F */
-	0x60, /* I */
-	0xec, /* N */
-	0xbc, /* G */
-	0x9e, /* E */
-	0xef, /* R */
-	
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-};
+	// 本来は外部からのLATCH信号で更新するが、
+	// デモなので内部から更新する。
+	light_update();
+}
+
+/************************************************************/
 
 /**
  * [8][8][8][8][8][8][8][8]
  */
-static void brightness_max_and_all_light_demo(void)
-{	
+static void brightness_max_and_turn_on_all(void)
+{
 	memset(data, 0xff, sizeof(data));
 	memset(brightness, 100, sizeof(brightness));
-	
-	light_set_data(data);
-	light_set_brightness(brightness);
-	light_update();
+	update();
 }
+
+/**
+ * [ ][ ][ ][ ][ ][ ][ ][ ]
+ */
+static void brightness_min_and_turn_off_all(void)
+{
+	memset(data, 0x00, sizeof(data));
+	memset(brightness, 0, sizeof(brightness));
+	update();
+}
+
+/************************************************************/
 
 /**
  * [%][3][d][ ][8][8][8][8]
@@ -223,9 +235,54 @@ static void controll_brightness_demo(void)
 	brightness[6] = brightness_value;
 	brightness[7] = brightness_value;
 	
-	light_set_data(data);
-	light_set_brightness(brightness);
-	light_update();
+	update();
+}
+
+/************************************************************/
+
+/** 展示用デモのバナー */
+static const uint8_t banner[] = {
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	
+	0xe4, /* 7 */
+	0xb6, /* S */
+	0x9e, /* E */
+	0xbc, /* G */
+	0x10, /* _ */
+	0x8e, /* F */
+	0x60, /* I */
+	0xec, /* N */
+	0xbc, /* G */
+	0x9e, /* E */
+	0xef, /* R */
+	
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+};
+
+/** スクロール位置(展示用デモで使用) */
+static int scroll_pos;
+
+/** スクロールタイミング */
+static uint32_t next_scroll_time;
+
+static void presentation_demo_init(void)
+{
+	scroll_pos = 0;
+	next_scroll_time = demo_base_count + SCROLL_DELAY_MS;
 }
 
 /**
@@ -233,28 +290,16 @@ static void controll_brightness_demo(void)
  */
 static void presentation_demo(void)
 {
-	// TODO: 初期化関数を作成してモード変更の度に初期位置から始めたい。
-	static int pos = 0;
-	
-	if (demo_base_count % SCROLL_DELAY_MS == 0) {
-		pos++;
-		if (pos == ((sizeof(banner) / sizeof(banner[0])) - 8 + 1)) {
-			pos = 0;
+	if (demo_base_count >= next_scroll_time) {
+		next_scroll_time += SCROLL_DELAY_MS;
+		scroll_pos++;
+		if (scroll_pos == ((sizeof(banner) / sizeof(banner[0])) - 8 + 1)) {
+			scroll_pos = 0;
 		}
 	}
 	
-	memcpy(data, &banner[pos], sizeof(data));
+	memcpy(data, &banner[scroll_pos], sizeof(data));
 	memset(brightness, 100, sizeof(brightness));
 	
-	light_set_data(data);
-	light_set_brightness(brightness);
-	
-	// 本来は外部からのLATCH信号で更新するが、
-	// デモなので内部から更新する。
-	light_update();
-}
-
-static void nop(void)
-{
-	/* 何もしない */
+	update();
 }
