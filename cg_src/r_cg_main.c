@@ -38,7 +38,7 @@ Includes
 #include "r_cg_intp.h"
 /* Start user code for include. Do not edit comment generated here */
 #include "com.h"
-#include "demo.h"
+#include "mode.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -53,7 +53,9 @@ Pragma directive
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
-static BOOL demo_timer_expired = FALSE;
+static uint32_t system_time = 0;
+static uint32_t next_1ms_callback_time = 0;
+static uint32_t next_100ms_callback_time = 0;
 /* End user code. Do not edit comment generated here */
 
 static void R_MAIN_UserInit(void);
@@ -69,9 +71,13 @@ void main(void)
     /* Start user code. Do not edit comment generated here */
 	while (1U)
     {
-		if (demo_timer_expired) {
-			demo_timer_expired = FALSE;
-			demo_cycle_proc();
+		if (system_time >= next_1ms_callback_time) {
+			next_1ms_callback_time = system_time + 1;
+			mode_proc();
+		}
+		if (system_time >= next_100ms_callback_time) {
+			next_100ms_callback_time = system_time + 100;
+			mode_update();
 		}
 		R_WDT_Restart();
     }
@@ -87,7 +93,7 @@ static void R_MAIN_UserInit(void)
 {
     /* Start user code. Do not edit comment generated here */
 	com_init();
-	demo_init();
+	mode_init();
 	R_TAU0_Channel3_Start();
     EI();
     /* End user code. Do not edit comment generated here */
@@ -104,7 +110,7 @@ static void R_MAIN_UserInit(void)
 static void __near r_tau0_channel3_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	demo_timer_expired = TRUE;
+	system_time++;
     /* End user code. Do not edit comment generated here */
 }
 
