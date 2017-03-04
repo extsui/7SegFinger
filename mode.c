@@ -64,7 +64,13 @@ static const state_action_t state_table[] = {
 
 static uint32_t demo_base_count = 0;
 
-static uint8_t cur_mode = 0;
+/**
+ * 現在のモード
+ * 
+ * 起動時に初期化処理が必ず実行されるようにするため、
+ * モード端子であり得ない値(0-3以外)を設定しておく。
+ */
+static uint8_t cur_mode = 0xFF;
 
 static uint8_t data[NUM_OF_7SEG] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
 static uint8_t brightness[NUM_OF_7SEG] = { 100, 100, 100, 100, 100, 100, 100, 100, };

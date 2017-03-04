@@ -30,28 +30,10 @@ typedef struct {
 } light_t;
 
 /** 点灯中データ情報 */
-static light_t light[NUM_OF_7SEG] = {
-	{ 0x60, 100, },
-	{ 0xDA, 1, }, // TODO: 最低輝度は保証したい。つまり、輝度=1でも薄暗く表示はしておきたい。
-	{ 0xF2, 0, }, //		TDR更新前にタイマ1止めて、TDR更新後にタイマスタートで実現可能？
-	{ 0xFE, 0, },
-	{ 0xFE, 0, },
-	{ 0xFE, 0, },
-	{ 0xFE, 0, },
-	{ 0xFE, 0, },
-};
+static light_t light[NUM_OF_7SEG];
 
 /** 更新用データ情報 */
-static light_t latch[NUM_OF_7SEG] = {
-	{ 0xFF, 1, },	// 輝度1での明るさを確認するため
-	{ 0xFF, 100, },	// 輝度100での明るさを確認するため
-	{ 0xFF, 0, },	// 直前が100でも消灯することを確認するため
-	{ 0x00, 0, },
-	{ 0x00, 0, },
-	{ 0x00, 0, },
-	{ 0x00, 0, },
-	{ 0x00, 0, },
-};
+static light_t latch[NUM_OF_7SEG];
 
 /** 現在の点灯箇所 */
 static int light_cur_pos;
@@ -66,6 +48,9 @@ void light_init(void)
 	PIN_nSCLR = 0;
 	PIN_nSCLR = 1;
 	PIN_RCK = 0;
+	
+	memset(light, 0, sizeof(light));
+	memset(latch, 0, sizeof(latch));
 	
 	light_cur_pos = 0;
 	
