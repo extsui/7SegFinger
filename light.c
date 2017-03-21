@@ -38,6 +38,9 @@ static light_t latch[NUM_OF_7SEG];
 /** 現在の点灯箇所 */
 static int light_cur_pos;
 
+/** 輝度最高時のPWMタイマの値 */
+static uint16_t max_brightness_pwm_value;
+
 static void set_pwm_duty(uint8_t duty);
 
 /**
@@ -48,6 +51,8 @@ void light_init(void)
 	PIN_nSCLR = 0;
 	PIN_nSCLR = 1;
 	PIN_RCK = 0;
+	
+	max_brightness_pwm_value = ((uint16_t)TDR01H<<8) | TDR01L;
 	
 	memset(light, 0, sizeof(light));
 	memset(latch, 0, sizeof(latch));
@@ -105,7 +110,7 @@ void light_move_to_next_pos_callback(void)
 	shift_data[1] = light[light_cur_pos].data;
 	
 	// アノードコモンの場合、以下を有効にすること
-	#define ANODE_COMMON (1)
+	//#define ANODE_COMMON (1)
 	#if ANODE_COMMON
 		shift_data[1] = ~shift_data[1];
 	#endif
@@ -138,7 +143,7 @@ void light_update_shift_register_callback(void)
 static void set_pwm_duty(uint8_t duty)
 {
 	uint8_t new_tdr01h, new_tdr01l;
-	uint16_t tdr_duty_100 = (_9B_TAU_TDR01H_VALUE << 8) | _78_TAU_TDR01L_VALUE;
+	uint16_t tdr_duty_100 = max_brightness_pwm_value;
 	uint16_t tdr_duty_x = (uint16_t)((uint32_t)tdr_duty_100 * duty / 100);
 	
 	// TDR0nH→TDR0nLの順番に連続で書き込む必要がある

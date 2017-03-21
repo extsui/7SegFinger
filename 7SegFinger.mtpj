@@ -134,13 +134,6 @@
       <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
       <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
     </Instance>
-    <Instance Guid="87f70868-4bf4-46d5-b01d-245e32d1f332">
-      <Name>r_cg_tau_user.c</Name>
-      <Type>File</Type>
-      <RelativePath>cg_src\r_cg_tau_user.c</RelativePath>
-      <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
-      <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
-    </Instance>
     <Instance Guid="5a15764f-c4dd-4930-aa04-16079ec082d6">
       <Name>r_cg_sau.c</Name>
       <Type>File</Type>
@@ -148,24 +141,10 @@
       <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
       <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
     </Instance>
-    <Instance Guid="1a11ea36-5cf3-4ba3-b2f8-dca80b610339">
-      <Name>r_cg_sau_user.c</Name>
-      <Type>File</Type>
-      <RelativePath>cg_src\r_cg_sau_user.c</RelativePath>
-      <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
-      <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
-    </Instance>
     <Instance Guid="b3f65b5b-ee22-4674-93a7-45207a88374b">
       <Name>r_cg_intp.c</Name>
       <Type>File</Type>
       <RelativePath>cg_src\r_cg_intp.c</RelativePath>
-      <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
-      <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
-    </Instance>
-    <Instance Guid="ec2b97e5-dbbb-48c5-9f0f-55d392abb97b">
-      <Name>r_cg_intp_user.c</Name>
-      <Type>File</Type>
-      <RelativePath>cg_src\r_cg_intp_user.c</RelativePath>
       <TreeImageGuid>941832c1-fc3b-4e1b-94e8-01ea17128b42</TreeImageGuid>
       <ParentItem>7e3fcdad-9556-46f0-ad2c-018e67626c0f</ParentItem>
     </Instance>
@@ -308,21 +287,15 @@
       <SourceItemType10>CSource</SourceItemType10>
       <SourceItemGuid11>0980fd9b-4865-4fd0-b993-264bb9ab9209</SourceItemGuid11>
       <SourceItemType11>CSource</SourceItemType11>
-      <SourceItemGuid12>87f70868-4bf4-46d5-b01d-245e32d1f332</SourceItemGuid12>
+      <SourceItemGuid12>5a15764f-c4dd-4930-aa04-16079ec082d6</SourceItemGuid12>
       <SourceItemType12>CSource</SourceItemType12>
-      <SourceItemGuid13>5a15764f-c4dd-4930-aa04-16079ec082d6</SourceItemGuid13>
+      <SourceItemGuid13>b3f65b5b-ee22-4674-93a7-45207a88374b</SourceItemGuid13>
       <SourceItemType13>CSource</SourceItemType13>
-      <SourceItemGuid14>1a11ea36-5cf3-4ba3-b2f8-dca80b610339</SourceItemGuid14>
+      <SourceItemGuid14>2bc72b3f-d38c-4a31-a7ff-ad5a721b9bdc</SourceItemGuid14>
       <SourceItemType14>CSource</SourceItemType14>
-      <SourceItemGuid15>b3f65b5b-ee22-4674-93a7-45207a88374b</SourceItemGuid15>
+      <SourceItemGuid15>85b9ab6c-0a33-493e-aaad-e2193ef033a9</SourceItemGuid15>
       <SourceItemType15>CSource</SourceItemType15>
-      <SourceItemGuid16>ec2b97e5-dbbb-48c5-9f0f-55d392abb97b</SourceItemGuid16>
-      <SourceItemType16>CSource</SourceItemType16>
-      <SourceItemGuid17>2bc72b3f-d38c-4a31-a7ff-ad5a721b9bdc</SourceItemGuid17>
-      <SourceItemType17>CSource</SourceItemType17>
-      <SourceItemGuid18>85b9ab6c-0a33-493e-aaad-e2193ef033a9</SourceItemGuid18>
-      <SourceItemType18>CSource</SourceItemType18>
-      <SourceItemCount>19</SourceItemCount>
+      <SourceItemCount>16</SourceItemCount>
       <LastDeviceChangedCounter>0</LastDeviceChangedCounter>
     </Instance>
     <Instance Guid="6bb7060d-7e24-4135-bd9b-7db166417523">
@@ -648,7 +621,7 @@ cg_src
       <LinkOptionRrm-DefaultValue>False</LinkOptionRrm-DefaultValue>
       <LinkOptionRrmValue-DefaultValue />
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8587132320849369767</TimeTagModified--0>
+      <TimeTagModified--0>-8587114975542445394</TimeTagModified--0>
       <LinkOptionAutoSectionLayout-0>True</LinkOptionAutoSectionLayout-0>
       <LinkOptionCpu-0>False</LinkOptionCpu-0>
       <LinkOptionDebug-0>Debug</LinkOptionDebug-0>
@@ -820,7 +793,7 @@ cg_src
       <LibOptionChangeMessageError-DefaultValue>None</LibOptionChangeMessageError-DefaultValue>
       <LibOptionChangeMessageErrorNumber-DefaultValue />
       <IsLockedByUser>False</IsLockedByUser>
-      <TimeTagModified--0>-8587132320849369767</TimeTagModified--0>
+      <TimeTagModified--0>-8587114975542445394</TimeTagModified--0>
       <LibOptionDebug-0>Debug</LibOptionDebug-0>
       <LibOptionForm-0>LibraryU</LibOptionForm-0>
       <LibOptionInput-0 />
@@ -915,25 +888,13 @@ cg_src
       <ItemAddTime>636195103153881880</ItemAddTime>
       <ItemAddTimeCount>6</ItemAddTimeCount>
     </Instance>
-    <Instance Guid="87f70868-4bf4-46d5-b01d-245e32d1f332">
-      <ItemAddTime>636195103153881880</ItemAddTime>
-      <ItemAddTimeCount>7</ItemAddTimeCount>
-    </Instance>
     <Instance Guid="5a15764f-c4dd-4930-aa04-16079ec082d6">
       <ItemAddTime>636195103153881880</ItemAddTime>
       <ItemAddTimeCount>10</ItemAddTimeCount>
     </Instance>
-    <Instance Guid="1a11ea36-5cf3-4ba3-b2f8-dca80b610339">
-      <ItemAddTime>636195103153881880</ItemAddTime>
-      <ItemAddTimeCount>11</ItemAddTimeCount>
-    </Instance>
     <Instance Guid="b3f65b5b-ee22-4674-93a7-45207a88374b">
       <ItemAddTime>636195103153881880</ItemAddTime>
       <ItemAddTimeCount>12</ItemAddTimeCount>
-    </Instance>
-    <Instance Guid="ec2b97e5-dbbb-48c5-9f0f-55d392abb97b">
-      <ItemAddTime>636195103153881880</ItemAddTime>
-      <ItemAddTimeCount>13</ItemAddTimeCount>
     </Instance>
     <Instance Guid="085d03e9-3d51-46b4-9289-8e1728c994e3">
       <ItemAddTime>636195103153881880</ItemAddTime>
@@ -1066,26 +1027,14 @@ cg_src
       <SourceItem13-IsLockedByUser>False</SourceItem13-IsLockedByUser>
       <SourceItem13-BuildingTarget-0>True</SourceItem13-BuildingTarget-0>
       <SourceItem13-IndividualCompileOption-0>False</SourceItem13-IndividualCompileOption-0>
-      <TimeTagModified-SourceItem14--0>-8587177257700883927</TimeTagModified-SourceItem14--0>
+      <TimeTagModified-SourceItem14--0>-8587175468510691024</TimeTagModified-SourceItem14--0>
       <SourceItem14-IsLockedByUser>False</SourceItem14-IsLockedByUser>
       <SourceItem14-BuildingTarget-0>True</SourceItem14-BuildingTarget-0>
       <SourceItem14-IndividualCompileOption-0>False</SourceItem14-IndividualCompileOption-0>
-      <TimeTagModified-SourceItem15--0>-8587177257700883927</TimeTagModified-SourceItem15--0>
+      <TimeTagModified-SourceItem15--0>-8587175468510681023</TimeTagModified-SourceItem15--0>
       <SourceItem15-IsLockedByUser>False</SourceItem15-IsLockedByUser>
       <SourceItem15-BuildingTarget-0>True</SourceItem15-BuildingTarget-0>
       <SourceItem15-IndividualCompileOption-0>False</SourceItem15-IndividualCompileOption-0>
-      <TimeTagModified-SourceItem16--0>-8587177257700883927</TimeTagModified-SourceItem16--0>
-      <SourceItem16-IsLockedByUser>False</SourceItem16-IsLockedByUser>
-      <SourceItem16-BuildingTarget-0>True</SourceItem16-BuildingTarget-0>
-      <SourceItem16-IndividualCompileOption-0>False</SourceItem16-IndividualCompileOption-0>
-      <TimeTagModified-SourceItem17--0>-8587175468510691024</TimeTagModified-SourceItem17--0>
-      <SourceItem17-IsLockedByUser>False</SourceItem17-IsLockedByUser>
-      <SourceItem17-BuildingTarget-0>True</SourceItem17-BuildingTarget-0>
-      <SourceItem17-IndividualCompileOption-0>False</SourceItem17-IndividualCompileOption-0>
-      <TimeTagModified-SourceItem18--0>-8587175468510681023</TimeTagModified-SourceItem18--0>
-      <SourceItem18-IsLockedByUser>False</SourceItem18-IsLockedByUser>
-      <SourceItem18-BuildingTarget-0>True</SourceItem18-BuildingTarget-0>
-      <SourceItem18-IndividualCompileOption-0>False</SourceItem18-IndividualCompileOption-0>
     </Instance>
   </Class>
   <Class Guid="44fa27c9-0aa0-4297-bd3b-2c5c5bdb8881">
@@ -10257,7 +10206,7 @@ cg_src
             &lt;/SerializableData&gt;
             &lt;SerializableData name="OneShotSlave1"&gt;
               &lt;SerializableData name="Pulse value"&gt;
-                &lt;DataElement key="Text" value="1990"&gt;
+                &lt;DataElement key="Text" value="1900"&gt;
                 &lt;/DataElement&gt;
               &lt;/SerializableData&gt;
               &lt;SerializableData name="PulseValueScale"&gt;
@@ -20094,9 +20043,9 @@ cg_src
 &lt;/SOAP-ENV:Body&gt;
 &lt;/SOAP-ENV:Envelope&gt;
 </KeyExtGridLayout>
-      <KeyTopViewZoom>1</KeyTopViewZoom>
-      <KeyTopViewAngle>0</KeyTopViewAngle>
-      <KeyTopViewPartsCollapsed>False</KeyTopViewPartsCollapsed>
+      <KeyTopViewZoom />
+      <KeyTopViewAngle />
+      <KeyTopViewPartsCollapsed />
       <KEY_SAVE_ALLOCATED_FUNCTION>False</KEY_SAVE_ALLOCATED_FUNCTION>
       <KEY_SAVE_DEVICE_PIN_LIST_ZOOM>100</KEY_SAVE_DEVICE_PIN_LIST_ZOOM>
       <KEY_SAVE_COLUMN_WIDTH_PIN_NUMBER>0:68:68,1:67:67,2:269:269,3:67:67,4:40:40,5:50:50,6:160:160,7:210:210,8:210:210,9:210:210,10:100:100</KEY_SAVE_COLUMN_WIDTH_PIN_NUMBER>
