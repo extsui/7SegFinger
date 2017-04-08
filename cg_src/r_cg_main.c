@@ -23,7 +23,7 @@
 * Device(s)    : R5F10Y47
 * Tool-Chain   : CCRL
 * Description  : This file implements main function.
-* Creation Date: 2017/01/30
+* Creation Date: 2017/04/07
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -113,5 +113,3 @@ static void __near r_tau0_channel3_interrupt(void)
 	system_time++;
     /* End user code. Do not edit comment generated here */
 }
-
-/* End user code. Do not edit comment generated here */

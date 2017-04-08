@@ -162,6 +162,7 @@ static void set_pwm_duty(uint8_t duty)
 static void __near r_tau0_channel2_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
+	EI();	// ‘½dŠ„‚è‚İ‹–‰Â
 	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
 }
@@ -182,6 +183,7 @@ extern volatile uint16_t  g_csi01_tx_count;            /* csi01 send data count 
 static void r_csi01_callback_sendend(void)
 {
     /* Start user code. Do not edit comment generated here */
+	EI();	// ‘½dŠ„‚è‚İ‹–‰Â
 	light_update_shift_register_callback();
     /* End user code. Do not edit comment generated here */
 }
@@ -195,6 +197,8 @@ static void r_csi01_callback_sendend(void)
 static void __near r_csi01_interrupt(void)
 {
     volatile uint8_t err_type;
+
+	EI();	// ‘½dŠ„‚è‚İ‹–‰Â
 
     err_type = (uint8_t)(SSR01 & _01_SAU_OVERRUN_ERROR);
     SIR01 = (uint8_t)err_type;
