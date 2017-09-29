@@ -12,15 +12,14 @@
 
 /** フレーム種別 */
 typedef enum {
-	FRAME_DATA = 0,			///< 7セグ表示データ指定
-	FRAME_BRIGHTNESS = 1,	///< 7セグ輝度データ指定
+	FRAME_DATA = 1,			///< 7セグ表示データ指定
+	FRAME_BRIGHTNESS = 2,	///< 7セグ輝度データ指定
 } frame_type_t;
 
 /** フレーム構造体 */
 typedef struct {
 	frame_type_t type;			///< 種別
 	uint8_t data[NUM_OF_7SEG];	///< 各7セグ用データ
-	uint8_t checksum;			///< チェックサム
 } frame_t;
 
 void frame_init(void);

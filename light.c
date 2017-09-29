@@ -26,7 +26,7 @@ static void light_update_shift_register_callback(void);
 /** 点灯用データ構造体 */
 typedef struct {
 	uint8_t data;		///< 表示データ
-	uint8_t brightness;	///< 輝度(0-100)
+	uint8_t brightness;	///< 輝度(0-255)
 } light_t;
 
 /** 点灯中データ情報 */
@@ -136,15 +136,15 @@ void light_update_shift_register_callback(void)
 }
 
 /**
- * PWM出力のデューティ比(0-100)を設定する。
+ * PWM出力のデューティ比(0-255)を設定する。
  *
  * ワンショット・パルス機能を使用して実現する。
  */
 static void set_pwm_duty(uint8_t duty)
 {
 	uint8_t new_tdr01h, new_tdr01l;
-	uint16_t tdr_duty_100 = max_brightness_pwm_value;
-	uint16_t tdr_duty_x = (uint16_t)((uint32_t)tdr_duty_100 * duty / 100);
+	uint16_t tdr_duty_255 = max_brightness_pwm_value;
+	uint16_t tdr_duty_x = (uint16_t)((uint32_t)tdr_duty_255 * duty >> 8);
 	
 	// TDR0nH→TDR0nLの順番に連続で書き込む必要がある
 	new_tdr01h = (uint8_t)((tdr_duty_x & 0xFF00) >> 8);

@@ -13,8 +13,6 @@
 /************************************************************
  * プロトタイプ宣言
  ************************************************************/
-static uint8_t calc_checksum(const frame_t *frame);
-
 /**
  * フレーム部の初期化
  * @param なし
@@ -36,10 +34,6 @@ uint8_t frame_analyze_proc(const uint8_t data[])
 {
 	const frame_t *frame = (const frame_t*)data;
 	
-	if (calc_checksum(frame) != 0xFF) {
-		return RET_ERR;
-	}
-	
 	switch (frame->type) {
 	case FRAME_DATA:
 		light_set_data(frame->data);
@@ -52,22 +46,4 @@ uint8_t frame_analyze_proc(const uint8_t data[])
 	}
 	
 	return RET_OK;
-}
-
-/**
- * チェックサムの計算
- */
-static uint8_t calc_checksum(const frame_t *frame)
-{
-	int i;
-	uint8_t checksum;
-	
-	checksum = 0;
-	checksum += frame->type;
-	for (i = 0; i < NUM_OF_7SEG; i++) {
-		checksum += frame->data[i];
-	}
-	checksum += frame->checksum;
-	
-	return checksum;
 }

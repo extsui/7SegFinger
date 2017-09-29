@@ -73,7 +73,7 @@ static uint32_t demo_base_count = 0;
 static uint8_t cur_mode = 0xFF;
 
 static uint8_t data[NUM_OF_7SEG] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, };
-static uint8_t brightness[NUM_OF_7SEG] = { 100, 100, 100, 100, 100, 100, 100, 100, };
+static uint8_t brightness[NUM_OF_7SEG] = { 255, 255, 255, 255, 255, 255, 255, 255, };
 static const uint8_t num_to_pattern[] = {
 	0xfc, /* 0 */
 	0x60, /* 1 */
@@ -162,7 +162,7 @@ static void update(void)
 static void brightness_max_and_turn_on_all(void)
 {
 	memset(data, 0xff, sizeof(data));
-	memset(brightness, 100, sizeof(brightness));
+	memset(brightness, 255, sizeof(brightness));
 	update();
 }
 
@@ -181,8 +181,8 @@ static void brightness_min_and_turn_off_all(void)
 /**
  * [%][3][d][ ][8][8][8][8]
  *
- * 前半3桁で輝度(0-100)を表示、後半4桁で輝度設定。
- * 「0→100(カウントアップ)」→「100→0(カウントダウン)」を繰り返す。
+ * 前半3桁で輝度(0-255)を表示、後半4桁で輝度設定。
+ * 「0→255(カウントアップ)」→「255→0(カウントダウン)」を繰り返す。
  * 10ミリ秒毎に、1ずつカウントアップ/カウントダウンする。
  */
 static void controll_brightness_demo(void)
@@ -192,11 +192,10 @@ static void controll_brightness_demo(void)
 	uint32_t brightness_value;
 	
 	// 輝度計算
-	// 例1: 1234[ms] --> 23
-	// 例2: 7890[ms] --> 89
-	brightness_value = demo_base_count / 10 % 100;
+	// カウンタの10msの桁を1の位として、下位8ビットを輝度として使用する。
+	brightness_value = (demo_base_count / 10) & 0xFF;
 	
-	// カウント更新タイミングか
+	// カウント更新タイミングかz
 	// 例1: 1234[ms] --> 4 --> FALSE
 	// 例2: 7890[ms] --> 0 --> TRUE
 	count_update_timing_flag = ((demo_base_count % 10) == 0) ? TRUE : FALSE;
@@ -205,13 +204,11 @@ static void controll_brightness_demo(void)
 	}
 	
 	// カウントアップフェーズか
-	// 起動時(0～1000[ms])はカウントアップから始まってほしいので、
+	// 起動時はカウントアップから始まってほしいので、
 	// 偶数秒→奇数秒をカウントアップとする。
-	// 例1: 1234[ms] --> 1 --> 1 --> FALSE
-	// 例2: 7890[ms] --> 7 --> 1 --> FALSE
-	count_up_phase_flag = (((demo_base_count / 1000) % 2) == 0) ? TRUE : FALSE;
+	count_up_phase_flag = ((((demo_base_count / 10) >> 8) & 0x1) == 0) ? TRUE : FALSE;
 	if (!count_up_phase_flag) {
-		brightness_value = 100 - brightness_value;
+		brightness_value = 255 - brightness_value;
 	}
 
 	// "%3d"。先頭が0の場合は表示しない。
@@ -232,10 +229,10 @@ static void controll_brightness_demo(void)
 	data[6] = 0xff;
 	data[7] = 0xff;
 	
-	brightness[0] = 100;
-	brightness[1] = 100;
-	brightness[2] = 100;
-	brightness[3] = 100;
+	brightness[0] = 255;
+	brightness[1] = 255;
+	brightness[2] = 255;
+	brightness[3] = 255;
 	brightness[4] = brightness_value;
 	brightness[5] = brightness_value;
 	brightness[6] = brightness_value;
@@ -305,7 +302,7 @@ static void presentation_demo(void)
 	}
 	
 	memcpy(data, &banner[scroll_pos], sizeof(data));
-	memset(brightness, 100, sizeof(brightness));
+	memset(brightness, 255, sizeof(brightness));
 	
 	update();
 }
