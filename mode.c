@@ -265,6 +265,10 @@ static const uint8_t banner[] = {
 	0xbc, /* G */
 	0x9e, /* E */
 	0xef, /* R */
+	0x00, /*   */
+	0x38, /* v */
+	0x61, /* 1.*/	// ★バージョン番号
+	0x60, /* 1 */	// ★バージョン番号
 	
 	0x00,
 	0x00,
@@ -289,7 +293,8 @@ static void presentation_demo_init(void)
 }
 
 /**
- * [7][S][E][G][_][F][I][N][G][E][R]をスクロール表示
+ * [7][S][E][G][_][F][I][N][G][E][R.][ ] [v][*][*]をスクロール表示
+ * ※[*]はバージョン番号
  */
 static void presentation_demo(void)
 {
