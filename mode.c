@@ -21,7 +21,8 @@
 #define MODE0	(P12_bit.no1)
 #define MODE1	(P12_bit.no2)
 
-#define SCROLL_DELAY_MS	(200)	// スクロール遅延ミリ秒
+//#define SCROLL_DELAY_MS	(200)	// スクロール遅延ミリ秒
+#define SCROLL_DELAY_MS	(100)	// スクロール遅延ミリ秒
 
 static uint8_t get_mode(void);
 static void nop(void);
@@ -244,6 +245,52 @@ static void controll_brightness_demo(void)
 /************************************************************/
 
 /** 展示用デモのバナー */
+//static const uint8_t banner[] = {
+/*	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+*/
+
+//	0x40,
+//	0xe4, /* 7 */
+//	0x4d,
+//	0xb6, /* S */
+//	0x69,
+//	0x9e, /* E */
+//	0x61,
+//	0xbc, /* G */
+//	0x09,
+//	0x10, /* _ */
+//	0x60,	
+//	0x8e, /* F */
+//	0x00,
+//	0x60, /* I */
+//	0x6c,
+//	0xec, /* N */
+//	0x6d,
+//	0xbc, /* G */
+//	0x69,
+//	0x9e, /* E */
+//	0x60,
+//	0xef, /* R */
+//	0x0c,
+/*	
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+};
+*/
+
 static const uint8_t banner[] = {
 	0x00,
 	0x00,
@@ -253,7 +300,7 @@ static const uint8_t banner[] = {
 	0x00,
 	0x00,
 	0x00,
-	
+
 	0xe4, /* 7 */
 	0xb6, /* S */
 	0x9e, /* E */
@@ -276,6 +323,43 @@ static const uint8_t banner[] = {
 	0x00,
 };
 
+static const uint8_t banner_virtual[] = {
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+
+//	0x40,
+//	0x0c,
+	
+	0x40, /*  +7 */
+	0x4d, /* 7+S */
+	0x69, /* S+E */
+	0x61, /* E+G */
+	0x09, /* G+_ */
+	0x60, /* _+F */
+	0x00, /* F+I */
+	0x6c, /* I+N */
+	0x6d, /* N+G */
+	0x69, /* G+E */
+	0x60, /* E+R */
+	0x0c, /* R+  */
+
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+};
+
+
 /** スクロール位置(展示用デモで使用) */
 static int scroll_pos;
 
@@ -294,14 +378,24 @@ static void presentation_demo_init(void)
 static void presentation_demo(void)
 {
 	if (demo_base_count >= next_scroll_time) {
+		static BOOL virtual_timing = FALSE;
+	
 		next_scroll_time += SCROLL_DELAY_MS;
-		scroll_pos++;
+		
+		if (!virtual_timing) {
+			memcpy(data, &banner[scroll_pos], sizeof(data));
+			virtual_timing = TRUE;
+		} else {
+			scroll_pos++;
+			memcpy(data, &banner_virtual[scroll_pos], sizeof(data));
+			virtual_timing = FALSE;
+		}
+		
 		if (scroll_pos == ((sizeof(banner) / sizeof(banner[0])) - 8 + 1)) {
 			scroll_pos = 0;
 		}
 	}
 	
-	memcpy(data, &banner[scroll_pos], sizeof(data));
 	memset(brightness, 255, sizeof(brightness));
 	
 	update();
