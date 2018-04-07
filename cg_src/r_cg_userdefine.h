@@ -43,6 +43,9 @@ typedef enum {
 
 #define DEBUG_PIN	(P4_bit.no1)
 
+// クロック周波数(Hz)
+#define CLOCK_HZ	(20000000UL)
+
 #define NUM_OF_7SEG	(8)	// 7セグメントLEDの個数
 /* End user code. Do not edit comment generated here */
 #endif

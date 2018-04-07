@@ -56,7 +56,7 @@ Global variables and functions
 void R_TAU0_Create(void)
 {
     TAU0EN = 1U;    /* supplies input clock */
-    TPS0 = _00_TAU_CKM0_FCLK_0 | _00_TAU_CKM1_FCLK_0;
+    TPS0 = _00_TAU_CKM0_FCLK_0 | _40_TAU_CKM1_FCLK_4;
     /* Stop all channels */
     TTH0 =_02_TAU_CH1_H8_STOP_TRG_ON | _08_TAU_CH3_H8_STOP_TRG_ON;
     TT0 = _01_TAU_CH0_STOP_TRG_ON | _02_TAU_CH1_STOP_TRG_ON | _04_TAU_CH2_STOP_TRG_ON | _08_TAU_CH3_STOP_TRG_ON;
@@ -85,33 +85,33 @@ void R_TAU0_Create(void)
     TMPR103 = 1U;
     TMPR003 = 1U;
     /* Channel 0 is used as master channel for oneshot output function */
-    TMR00H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_TRIGGER_SOFTWARE;
+    TMR00H = _80_TAU_CLOCK_SELECT_CKM1 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_TRIGGER_SOFTWARE;
     TMR00L = _08_TAU_MODE_ONESHOT;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR00H = _00_TAU_TDR00H_VALUE;
-    TDR00L = _00_TAU_TDR00L_VALUE;
+    TDR00H = _F4_TAU_TDR00H_VALUE;
+    TDR00L = _22_TAU_TDR00L_VALUE;
     TO0 &= (uint8_t)~_01_TAU_CH0_OUTPUT_VALUE_1;
     TOE0 &= (uint8_t)~_01_TAU_CH0_OUTPUT_ENABLE;
     /* Channel 1 is used as slave channel for oneshot output function */
-    TMR01H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | 
+    TMR01H = _80_TAU_CLOCK_SELECT_CKM1 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | 
              _04_TAU_TRIGGER_MASTER_INT;
     TMR01L = _08_TAU_MODE_ONESHOT;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR01H = _94_TAU_TDR01H_VALUE;
-    TDR01L = _70_TAU_TDR01L_VALUE;
+    TDR01H = _F4_TAU_TDR01H_VALUE;
+    TDR01L = _24_TAU_TDR01L_VALUE;
     TOM0 |= _02_TAU_CH1_OUTPUT_COMBIN;
     TOL0 |= _02_TAU_CH1_OUTPUT_LEVEL_L;
     TO0 |= _02_TAU_CH1_OUTPUT_VALUE_1;
     TOE0 |= _02_TAU_CH1_OUTPUT_ENABLE;
     /* Channel 2 used as interval timer */
-    TMR02H = _00_TAU_CLOCK_SELECT_CKM0 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | _00_TAU_TRIGGER_SOFTWARE;
+    TMR02H = _80_TAU_CLOCK_SELECT_CKM1 | _00_TAU_CLOCK_MODE_CKS | _00_TAU_COMBINATION_SLAVE | _00_TAU_TRIGGER_SOFTWARE;
     TMR02L = _00_TAU_MODE_INTERVAL_TIMER | _00_TAU_START_INT_UNUSED;
     /* Consecutive reading from the TDR0nH and TDR0nL registers and consecutive writing to the TDR0nH and TDR0nL
     registers must be performed in the state where an interrupt is disabled by the DI instruction. */
-    TDR02H = _9C_TAU_TDR02H_VALUE;
-    TDR02L = _3F_TAU_TDR02L_VALUE;
+    TDR02H = _F4_TAU_TDR02H_VALUE;
+    TDR02L = _23_TAU_TDR02L_VALUE;
     TOM0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_COMBIN;
     TOL0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_LEVEL_L;
     TO0 &= (uint8_t)~_04_TAU_CH2_OUTPUT_VALUE_1;

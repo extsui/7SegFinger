@@ -48,11 +48,41 @@ static void set_pwm_duty(uint8_t duty);
  */
 void light_init(void)
 {
+	uint16_t pwm_width, pwm_duty_max;
+
 	PIN_nSCLR = 0;
 	PIN_nSCLR = 1;
 	PIN_RCK = 0;
+	/*
+	pwm_width = 2500;		// 2000us
+	pwm_duty_max = 2375;	// 1900us
 	
-	max_brightness_pwm_value = ((uint16_t)TDR01H<<8) | TDR01L;
+	pwm_width = 62500;		// 50000us
+	pwm_duty_max = 62375;	// 49900us
+	
+	pwm_width = 1250;		// 1000us
+	pwm_duty_max = 1125;	// 900us
+	
+	pwm_width = 5000;		// 4000us
+	pwm_duty_max = 4875;	// 3900us
+	
+	pwm_width = 1000;		// 800us
+	pwm_duty_max = 875;		// 700us
+	*/
+	pwm_width = 2500;
+	pwm_duty_max = pwm_width - 125;
+	
+	// PWMパルス幅の周期の設定
+	TDR02H = (uint8_t)((pwm_width & 0xFF00) >> 8);
+	TDR02L = (uint8_t)((pwm_width & 0x00FF) >> 0);
+	// ワンショットマスタ周期の設定(最小値。S/Wトリガ用)
+	TDR00H = (uint8_t)((0 & 0xFF00) >> 8);
+	TDR00L = (uint8_t)((0 & 0x00FF) >> 0);
+	// ワンショットスレーブ周期の設定
+	TDR01H = (uint8_t)((pwm_duty_max & 0xFF00) >> 8);
+	TDR01L = (uint8_t)((pwm_duty_max & 0x00FF) >> 0);
+	
+	max_brightness_pwm_value = pwm_duty_max;
 	
 	memset(light, 0, sizeof(light));
 	memset(latch, 0, sizeof(latch));
