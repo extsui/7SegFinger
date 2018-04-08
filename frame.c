@@ -53,6 +53,16 @@ static void frame_set_char(const uint8_t *data)
 	light_set_data(seg);
 }
 
+static void frame_setting(const uint8_t *data)
+{
+	uint16_t light_cycle;	// 点灯周期
+
+	// ビッグエンディアン
+	// TODO: 本来は構造体で定義するべき。
+	light_cycle = ((uint16_t)data[0] << 8) | data[1];
+	light_set_light_cycle(light_cycle);
+}
+
 /**
  * フレーム解析処理
  * @param [in] data 受信データ
@@ -73,6 +83,9 @@ uint8_t frame_analyze_proc(const uint8_t data[])
 		break;
 	case FRAME_CHAR:
 		frame_set_char(frame->data);
+		break;
+	case FRMAE_SETTING:
+		frame_setting(frame->data);
 		break;
 	default:
 		return RET_ERR;

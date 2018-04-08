@@ -38,8 +38,37 @@ static light_t latch[NUM_OF_7SEG];
 /** 現在の点灯箇所 */
 static int light_cur_pos;
 
-/** 輝度最高時のPWMタイマの値 */
-static uint16_t max_brightness_pwm_value;
+/*
+ * ダイナミック点灯制御のタイミングチャート
+ *
+ * ↓点灯7セグ位置
+ * [0]                  [1]                  [2]
+ * <-------------------><-------------------><---...
+ *  |
+ *  +-----点灯マスタ周期(1000～50000us)
+ *     +--PWM最大周期(点灯マスタ周期 - 一定期間※)
+ *     |
+ *    <---------------->
+ * <-><-----------><---><-><-----------><---><-><...
+ *  |  |            |   
+ *  |  |            +---PWM OFF期間
+ *  |  +----------------PWM ON期間
+ *  +-------------------74HC595への転送時間等(PWMはOFF)
+ *
+ * ※この期間が長いと消灯時間が増えて上限輝度が下がるため
+ *   なるべく短くしたい。しかし、短くし過ぎるとデータ指定を
+ *   連続して行った場合にチラつきが発生する。
+ *   大体100us当たりが良い(50usだとチラつき有り)。
+ */
+// 上記の図の「一定期間」の値。
+// 100us@(CLK=20MHz, DIV=16)
+#define LIGHT_PWM_BLANK_VALUE	(125)
+ 
+/** 点灯マスタ周期のTDR値(ダイナミック点灯周期の大元) */
+static uint16_t light_master_cycle_value;
+
+/** PWM最大周期のTDR値 */
+static uint16_t light_pwm_width_value;
 
 static void set_pwm_duty(uint8_t duty);
 
@@ -48,41 +77,11 @@ static void set_pwm_duty(uint8_t duty);
  */
 void light_init(void)
 {
-	uint16_t pwm_width, pwm_duty_max;
-
 	PIN_nSCLR = 0;
 	PIN_nSCLR = 1;
 	PIN_RCK = 0;
-	/*
-	pwm_width = 2500;		// 2000us
-	pwm_duty_max = 2375;	// 1900us
 	
-	pwm_width = 62500;		// 50000us
-	pwm_duty_max = 62375;	// 49900us
-	
-	pwm_width = 1250;		// 1000us
-	pwm_duty_max = 1125;	// 900us
-	
-	pwm_width = 5000;		// 4000us
-	pwm_duty_max = 4875;	// 3900us
-	
-	pwm_width = 1000;		// 800us
-	pwm_duty_max = 875;		// 700us
-	*/
-	pwm_width = 2500;
-	pwm_duty_max = pwm_width - 125;
-	
-	// PWMパルス幅の周期の設定
-	TDR02H = (uint8_t)((pwm_width & 0xFF00) >> 8);
-	TDR02L = (uint8_t)((pwm_width & 0x00FF) >> 0);
-	// ワンショットマスタ周期の設定(最小値。S/Wトリガ用)
-	TDR00H = (uint8_t)((0 & 0xFF00) >> 8);
-	TDR00L = (uint8_t)((0 & 0x00FF) >> 0);
-	// ワンショットスレーブ周期の設定
-	TDR01H = (uint8_t)((pwm_duty_max & 0xFF00) >> 8);
-	TDR01L = (uint8_t)((pwm_duty_max & 0x00FF) >> 0);
-	
-	max_brightness_pwm_value = pwm_duty_max;
+	light_set_light_cycle(2000);
 	
 	memset(light, 0, sizeof(light));
 	memset(latch, 0, sizeof(latch));
@@ -116,6 +115,23 @@ void light_set_brightness(const uint8_t brightness[])
 	}
 }
 
+int light_set_light_cycle(uint16_t light_cycle_us)
+{
+	// 引数チェック
+	if ((light_cycle_us < 1000 ) || (50000 < light_cycle_us)) {
+		return -1;
+	}
+	
+	// μ秒からカウンタ値への変換
+	// ・1カウント当たりのμ秒 = CLOCK_HZ / TAU0_CHANNEL2_DIVISOR / 1000 / 1000 [us/cnt]
+	//   ※実際の計算は、精度の関係で順番を変えていることに注意。
+	// ・CLOCK_HZ=20MHz、DIVISOR=16 の場合は、1.25[us/cnt]。
+	light_master_cycle_value = (uint16_t)((((CLOCK_HZ / 1000) / TAU0_CHANNEL2_DIVISOR) * (uint32_t)light_cycle_us) / 1000);
+	light_pwm_width_value = light_master_cycle_value - LIGHT_PWM_BLANK_VALUE;
+	
+	return 0;
+}
+
 /**
  * 表示中データを設定したデータに更新する
  */
@@ -147,6 +163,10 @@ void light_move_to_next_pos_callback(void)
 	
 	R_CSI01_Send(shift_data, sizeof(shift_data));
 
+	// 点灯周期更新
+	TDR02H = (uint8_t)((light_master_cycle_value & 0xFF00) >> 8);
+	TDR02L = (uint8_t)((light_master_cycle_value & 0x00FF) >> 0);
+	
 	set_pwm_duty(light[light_cur_pos].brightness);
 	
 	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
@@ -173,12 +193,16 @@ void light_update_shift_register_callback(void)
 static void set_pwm_duty(uint8_t duty)
 {
 	uint8_t new_tdr01h, new_tdr01l;
-	uint16_t tdr_duty_255 = max_brightness_pwm_value;
+	uint16_t tdr_duty_255 = light_pwm_width_value;
 	uint16_t tdr_duty_x = (uint16_t)((uint32_t)tdr_duty_255 * duty >> 8);
 	
 	// TDR0nH→TDR0nLの順番に連続で書き込む必要がある
 	new_tdr01h = (uint8_t)((tdr_duty_x & 0xFF00) >> 8);
 	new_tdr01l = (uint8_t)(tdr_duty_x & 0x00FF);
+
+	// ワンショットマスタ周期の設定(最小値。S/Wトリガ用)
+	TDR00H = 0;	// 最小値固定(PWM制御開始までの時間)
+	TDR00L = 0;	// 最小値固定(PWM制御開始までの時間)
 	TDR01H = new_tdr01h;
 	TDR01L = new_tdr01l;
 }

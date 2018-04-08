@@ -15,6 +15,7 @@ typedef enum {
 	FRAME_DATA = 1,			///< 7セグ表示データ指定
 	FRAME_BRIGHTNESS = 2,	///< 7セグ輝度データ指定
 	FRAME_CHAR = 3,			///< 7セグ文字データ指定
+	FRMAE_SETTING = 4,		///< 7セグ設定データ指定
 } frame_type_t;
 
 /** フレーム構造体 */
