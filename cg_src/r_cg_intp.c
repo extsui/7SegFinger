@@ -63,12 +63,12 @@ void R_INTC_Create(void)
     PIF2 = 0U;    /* clear INTP2 interrupt flag */
     PMK3 = 1U;    /* disable INTP3 operation */
     PIF3 = 0U;    /* clear INTP3 interrupt flag */
-    /* Set INTP0 high priority */
-    PPR10 = 0U;
-    PPR00 = 0U;
-    /* Set INTP1 high priority */
-    PPR11 = 0U;
-    PPR01 = 0U;
+    /* Set INTP0 low priority */
+    PPR10 = 1U;
+    PPR00 = 1U;
+    /* Set INTP1 low priority */
+    PPR11 = 1U;
+    PPR01 = 1U;
     EGN0 = _01_INTP0_EDGE_FALLING_SEL;
     EGP0 = _01_INTP0_EDGE_RISING_SEL | _02_INTP1_EDGE_RISING_SEL;
     /* Set INTP1 pin */

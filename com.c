@@ -26,6 +26,11 @@ static void enable_spi(void);
 static void enable_latch(void);
 static void com_receive_trigger_callback(void);
 
+// DEBUG:
+// 受信エラー発生回数(SPI受信オーバーラン)
+// デバッガ可視にするためグローバル化する。
+uint32_t debug_recv_error_count = 0;
+
 /**
  * 通信部の初期化
  */
@@ -99,8 +104,11 @@ extern volatile uint16_t  g_csi00_tx_count;            /* csi00 send data count 
 static void r_csi00_callback_receiveend(void)
 {
     /* Start user code. Do not edit comment generated here */
+	// 受信に成功しているかを確認するためのデバッグ信号。
+	DEBUG_PIN = 1;
 	com_received_callback();
-    /* End user code. Do not edit comment generated here */
+	DEBUG_PIN = 0;
+	/* End user code. Do not edit comment generated here */
 }
 
 /***********************************************************************************************************************
@@ -115,7 +123,7 @@ static void r_csi00_callback_error(uint8_t err_type)
     /* Start user code. Do not edit comment generated here */
 	// デバッグ用
 	// この割り込みが入る場合、パケットロスが発生している。
-	NOP();
+	debug_recv_error_count++;
     /* End user code. Do not edit comment generated here */
 }
 

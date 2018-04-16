@@ -61,7 +61,9 @@ static int light_cur_pos;
  *   大体100us当たりが良い(50usだとチラつき有り)。
  */
 // 上記の図の「一定期間」の値。
-// 100us@(CLK=20MHz, DIV=16)
+// 短くて間に合うなら短い方が良い。
+// 100us@(CLK=20MHz, DIV=16) ---> 250
+// 50us                      ---> 125
 #define LIGHT_PWM_BLANK_VALUE	(125)
  
 /** 点灯マスタ周期のTDR値(ダイナミック点灯周期の大元) */
@@ -155,21 +157,10 @@ void light_move_to_next_pos_callback(void)
 	shift_data[0] = bit_table[light_cur_pos];
 	shift_data[1] = light[light_cur_pos].data;
 	
-	// アノードコモンの場合、以下を有効にすること
-	//#define ANODE_COMMON (1)
-	#if ANODE_COMMON
-		shift_data[1] = ~shift_data[1];
-	#endif
-	
+	// 「CSI01開始～完了割り込み」の時間について、
+	// 1MHzの場合は約20us、5MHzの場合は約10usとなり、
+	// 問題なく動作したため、5MHzとする。
 	R_CSI01_Send(shift_data, sizeof(shift_data));
-
-	// 点灯周期更新
-	TDR02H = (uint8_t)((light_master_cycle_value & 0xFF00) >> 8);
-	TDR02L = (uint8_t)((light_master_cycle_value & 0x00FF) >> 0);
-	
-	set_pwm_duty(light[light_cur_pos].brightness);
-	
-	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
 }
 
 /**
@@ -179,10 +170,21 @@ void light_move_to_next_pos_callback(void)
  */
 void light_update_shift_register_callback(void)
 {
+	set_pwm_duty(light[light_cur_pos].brightness);
+
+	// 点灯周期更新
+	TDR02H = (uint8_t)((light_master_cycle_value & 0xFF00) >> 8);
+	TDR02L = (uint8_t)((light_master_cycle_value & 0x00FF) >> 0);
+	
 	// RCKは立ち上がりで反映
 	PIN_RCK = 1;
 	PIN_RCK = 0;
+	
 	R_TAU0_Channel0_Set_SoftwareTriggerOn();
+
+	// 除算を使用しているが、命令レベルではシフト演算に
+	// 置き換えられており、数μ秒しかかからない。
+	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
 }
 
 /**
@@ -216,7 +218,6 @@ static void set_pwm_duty(uint8_t duty)
 static void __near r_tau0_channel2_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	EI();	// 多重割り込み許可
 	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
 }
@@ -237,7 +238,6 @@ extern volatile uint16_t  g_csi01_tx_count;            /* csi01 send data count 
 static void r_csi01_callback_sendend(void)
 {
     /* Start user code. Do not edit comment generated here */
-	EI();	// 多重割り込み許可
 	light_update_shift_register_callback();
     /* End user code. Do not edit comment generated here */
 }
@@ -251,8 +251,6 @@ static void r_csi01_callback_sendend(void)
 static void __near r_csi01_interrupt(void)
 {
     volatile uint8_t err_type;
-
-	EI();	// 多重割り込み許可
 
     err_type = (uint8_t)(SSR01 & _01_SAU_OVERRUN_ERROR);
     SIR01 = (uint8_t)err_type;

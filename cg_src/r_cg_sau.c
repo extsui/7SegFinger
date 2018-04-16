@@ -87,9 +87,9 @@ void R_CSI00_Create(void)
     ST0 |= _01_SAU_CH0_STOP_TRG_ON;    /* disable CSI00 */
     CSIMK00 = 1U;    /* disable INTCSI00 interrupt */
     CSIIF00 = 0U;    /* clear INTCSI00 interrupt flag */
-    /* Set INTCSI00 high priority */
-    CSIPR100 = 0U;
-    CSIPR000 = 0U;
+    /* Set INTCSI00 low priority */
+    CSIPR100 = 1U;
+    CSIPR000 = 1U;
     SIR00 = _02_SAU_SIRMN_PECTMN | _01_SAU_SIRMN_OVCTMN;    /* clear error flag */
     SMR00L = _20_SAU_SMRMN_INITIALVALUE | _00_SAU_MODE_CSI | _00_SAU_TRANSFER_END;
     SMR00H = _40_SAU_CLOCK_MODE_TI0N | _00_SAU_TRIGGER_SOFTWARE;
@@ -174,7 +174,7 @@ void R_CSI01_Create(void)
     SMR01H = _00_SAU_CLOCK_SELECT_CK00 | _00_SAU_CLOCK_MODE_CKS | _00_SAU_TRIGGER_SOFTWARE;
     SCR01L = _80_SAU_LSB | _07_SAU_LENGTH_8;
     SCR01H = _80_SAU_TRANSMISSION | _30_SAU_TIMING_4;
-    SDR01H = _12_CSI01_DIVISOR;
+    SDR01H = _02_CSI01_DIVISOR;
     CKO0 &= (uint8_t)~_02_SAU_CH1_CLOCK_OUTPUT_1;    /* CSI01 clock initial level */
     SO0 &= (uint8_t)~_02_SAU_CH1_DATA_OUTPUT_1;    /* CSI01 SO initial level */
     SOE0 |= _02_SAU_CH1_OUTPUT_ENABLE;    /* enable CSI01 output */
