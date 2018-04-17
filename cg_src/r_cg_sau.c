@@ -249,4 +249,36 @@ MD_STATUS R_CSI01_Send(uint8_t * const tx_buf, uint16_t tx_num)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+/**
+ * 同期送信(割り込み無し)
+ * 割り込みを使用した方がトータルで時間が
+ * かかるような高速転送時に使用すること。
+ */
+MD_STATUS R_CSI01_SendBlocking(uint8_t * const tx_buf, uint16_t tx_num)
+{
+    MD_STATUS status = MD_OK;
+
+    if (tx_num < 1U) {
+        status = MD_ARGERROR;
+    } else {
+		uint8_t i;
+		
+		// 割り込み禁止で送信
+		// ※割り込みハンドラ未登録のため
+		//   割り込み禁止は継続とする。
+		CSIMK01 = 1U;
+		
+		for (i = 0; i < tx_num; i++) {
+			// 送信可能になるまで待つ
+			#define TSF	(0x40)	// 通信動作状態(1:動作中/0:停止中)
+			while ((SSR01 & TSF) != 0) {
+				NOP();
+			}
+			// データ送信
+			SIO01 = tx_buf[i];
+		}
+    }
+
+    return (status);
+}
 /* End user code. Do not edit comment generated here */

@@ -158,18 +158,10 @@ void light_move_to_next_pos_callback(void)
 	shift_data[1] = light[light_cur_pos].data;
 	
 	// 「CSI01開始～完了割り込み」の時間について、
-	// 1MHzの場合は約20us、5MHzの場合は約10usとなり、
-	// 問題なく動作したため、5MHzとする。
-	R_CSI01_Send(shift_data, sizeof(shift_data));
-}
-
-/**
- * シフトレジスタの表示更新コールバック
- *
- * 7セグの表示データを反映する
- */
-void light_update_shift_register_callback(void)
-{
+	// 1MHzの場合は約20us、5MHzの場合は約10usとなった。(@20MHz)
+	// ⇒割り込み撤廃により約6usとなったため、これを採用する。
+	R_CSI01_SendBlocking(shift_data, sizeof(shift_data));
+	
 	set_pwm_duty(light[light_cur_pos].brightness);
 
 	// 点灯周期更新
@@ -220,52 +212,4 @@ static void __near r_tau0_channel2_interrupt(void)
     /* Start user code. Do not edit comment generated here */
 	light_move_to_next_pos_callback();
     /* End user code. Do not edit comment generated here */
-}
-
-extern volatile uint8_t * gp_csi01_rx_address;         /* csi01 receive buffer address */
-extern volatile uint16_t  g_csi01_rx_length;           /* csi01 receive data length */
-extern volatile uint16_t  g_csi01_rx_count;            /* csi01 receive data count */
-extern volatile uint8_t * gp_csi01_tx_address;         /* csi01 send buffer address */
-extern volatile uint16_t  g_csi01_send_length;         /* csi01 send data length */
-extern volatile uint16_t  g_csi01_tx_count;            /* csi01 send data count */
-
-/***********************************************************************************************************************
-* Function Name: r_csi01_callback_sendend
-* Description  : This function is a callback function when CSI01 finishes transmission.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void r_csi01_callback_sendend(void)
-{
-    /* Start user code. Do not edit comment generated here */
-	light_update_shift_register_callback();
-    /* End user code. Do not edit comment generated here */
-}
-
-/***********************************************************************************************************************
-* Function Name: r_csi01_interrupt
-* Description  : None
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void __near r_csi01_interrupt(void)
-{
-    volatile uint8_t err_type;
-
-    err_type = (uint8_t)(SSR01 & _01_SAU_OVERRUN_ERROR);
-    SIR01 = (uint8_t)err_type;
-
-    if (err_type != 1U)
-    {
-        if (g_csi01_tx_count > 0U)
-        {
-            SIO01 = *gp_csi01_tx_address;
-            gp_csi01_tx_address++;
-            g_csi01_tx_count--;
-        }
-        else
-        {
-            r_csi01_callback_sendend();    /* complete send */
-        }
-    }
 }

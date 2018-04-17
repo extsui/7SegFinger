@@ -250,8 +250,8 @@ void R_CSI01_Create(void);
 void R_CSI01_Start(void);
 void R_CSI01_Stop(void);
 MD_STATUS R_CSI01_Send(uint8_t * const tx_buf, uint16_t tx_num);
-static void r_csi01_callback_sendend(void);
 
 /* Start user code for function. Do not edit comment generated here */
+MD_STATUS R_CSI01_SendBlocking(uint8_t * const tx_buf, uint16_t tx_num);
 /* End user code. Do not edit comment generated here */
 #endif

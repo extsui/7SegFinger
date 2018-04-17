@@ -137,22 +137,7 @@ static void __near r_csi01_interrupt(void)
             gp_csi01_tx_address++;
             g_csi01_tx_count--;
         }
-        else
-        {
-            r_csi01_callback_sendend();    /* complete send */
-        }
     }
-}
-/***********************************************************************************************************************
-* Function Name: r_csi01_callback_sendend
-* Description  : This function is a callback function when CSI01 finishes transmission.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void r_csi01_callback_sendend(void)
-{
-    /* Start user code. Do not edit comment generated here */
-    /* End user code. Do not edit comment generated here */
 }
 
 /* Start user code for adding. Do not edit comment generated here */
