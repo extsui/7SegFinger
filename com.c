@@ -27,6 +27,14 @@ static void enable_latch(void);
 static void com_receive_trigger_callback(void);
 
 // DEBUG:
+// フレーム開始トリガ(CS↓)受信回数
+uint32_t debug_recv_frame_trigger_count = 0;
+
+// DEBUG:
+// フレーム受信完了回数
+uint32_t debug_recv_frame_complete_count = 0;
+
+// DEBUG:
 // 受信エラー発生回数(SPI受信オーバーラン)
 // デバッガ可視にするためグローバル化する。
 uint32_t debug_recv_error_count = 0;
@@ -55,6 +63,7 @@ void com_received_callback(void)
 void com_receive_trigger_callback(void)
 {
 	if (PIN_nCS == 0) {
+		debug_recv_frame_trigger_count++;
 		R_CSI00_Start();
 		R_CSI00_Receive(frame_buf, sizeof(frame_buf));
 	} else {
@@ -105,7 +114,9 @@ static void r_csi00_callback_receiveend(void)
 {
     /* Start user code. Do not edit comment generated here */
 	// 受信に成功しているかを確認するためのデバッグ信号。
+	// コマンドによって異なるが、約30us～80us当たりの値となる。
 	DEBUG_PIN = 1;
+	debug_recv_frame_complete_count++;
 	com_received_callback();
 	DEBUG_PIN = 0;
 	/* End user code. Do not edit comment generated here */

@@ -78,6 +78,9 @@ void R_TAU0_Create(void)
     /* Mask channel 3 higher 8 bits interrupt */
     TMMK03H = 1U;    /* disable INTTM03H interrupt */
     TMIF03H = 0U;    /* clear INTTM03H interrupt flag */
+    /* Set INTTM01 low priority */
+    TMPR101 = 1U;
+    TMPR001 = 1U;
     /* Set INTTM02 low priority */
     TMPR102 = 1U;
     TMPR002 = 1U;
@@ -140,6 +143,8 @@ void R_TAU0_Create(void)
 ***********************************************************************************************************************/
 void R_TAU0_Channel0_Start(void)
 {
+    TMIF01 = 0U;    /* clear INTTM01 interrupt flag */
+    TMMK01 = 0U;    /* enable INTTM01 interrupt */
     TOE0 |= _02_TAU_CH1_OUTPUT_ENABLE;
     TS0 |= _01_TAU_CH0_START_TRG_ON | _02_TAU_CH1_START_TRG_ON;
 }
@@ -153,6 +158,9 @@ void R_TAU0_Channel0_Stop(void)
 {
     TT0 |= _01_TAU_CH0_STOP_TRG_ON | _02_TAU_CH1_STOP_TRG_ON;
     TOE0 &= (uint8_t)~_02_TAU_CH1_OUTPUT_ENABLE;
+    /* Mask channel 1 interrupt */
+    TMMK01 = 1U;    /* disable INTTM01 interrupt */
+    TMIF01 = 0U;    /* clear INTTM01 interrupt flag */
 }
 /***********************************************************************************************************************
 * Function Name: R_TAU0_Channel0_Set_SoftwareTriggerOn

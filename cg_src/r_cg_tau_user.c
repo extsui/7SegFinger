@@ -38,6 +38,7 @@ Includes
 /***********************************************************************************************************************
 Pragma directive
 ***********************************************************************************************************************/
+#pragma interrupt r_tau0_channel1_interrupt(vect=INTTM01)
 #pragma interrupt r_tau0_channel2_interrupt(vect=INTTM02)
 #pragma interrupt r_tau0_channel3_interrupt(vect=INTTM03)
 /* Start user code for pragma. Do not edit comment generated here */
@@ -49,6 +50,17 @@ Global variables and functions
 /* Start user code for global. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 
+/***********************************************************************************************************************
+* Function Name: r_tau0_channel1_interrupt
+* Description  : This function INTTM01 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void __near r_tau0_channel1_interrupt(void)
+{
+    /* Start user code. Do not edit comment generated here */
+    /* End user code. Do not edit comment generated here */
+}
 /***********************************************************************************************************************
 * Function Name: r_tau0_channel2_interrupt
 * Description  : This function INTTM02 interrupt service routine.

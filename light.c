@@ -15,10 +15,10 @@
 #include <string.h>
 
 #pragma interrupt r_csi01_interrupt(vect=INTCSI01)
+#pragma interrupt r_tau0_channel1_interrupt(vect=INTTM01)
 #pragma interrupt r_tau0_channel2_interrupt(vect=INTTM02)
 
 static void light_move_to_next_pos_callback(void);
-static void light_update_shift_register_callback(void);
 
 #define PIN_nSCLR	(P0_bit.no3)
 #define PIN_RCK		(P0_bit.no6)
@@ -64,7 +64,7 @@ static int light_cur_pos;
 // 短くて間に合うなら短い方が良い。
 // 100us@(CLK=20MHz, DIV=16) ---> 250
 // 50us                      ---> 125
-#define LIGHT_PWM_BLANK_VALUE	(125)
+#define LIGHT_PWM_BLANK_VALUE	(250)
  
 /** 点灯マスタ周期のTDR値(ダイナミック点灯周期の大元) */
 static uint16_t light_master_cycle_value;
@@ -172,8 +172,6 @@ void light_move_to_next_pos_callback(void)
 	PIN_RCK = 1;
 	PIN_RCK = 0;
 	
-	R_TAU0_Channel0_Set_SoftwareTriggerOn();
-
 	// 除算を使用しているが、命令レベルではシフト演算に
 	// 置き換えられており、数μ秒しかかからない。
 	light_cur_pos = (light_cur_pos + 1) % NUM_OF_7SEG;
@@ -202,6 +200,27 @@ static void set_pwm_duty(uint8_t duty)
 }
 
 /***********************************************************************************************************************
+* Function Name: r_tau0_channel1_interrupt
+* Description  : This function INTTM01 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void __near r_tau0_channel1_interrupt(void)
+{
+    /* Start user code. Do not edit comment generated here */
+	// PWM出力完了タイミング
+	// ここで次の周期とPWMデューティを確定してTDRに設定しておく。
+	// 処理時間が約17usなのでフレームを落とさないようにするためには、
+	// SPI受信1バイトにかかる処理時間がこの値以上である必要がある。
+	// ⇒SPI受信クロック400kHzの場合1バイト受信が20usなので、
+	//   ここまで周波数を下げてやればフレームロスは無くなる。
+	//DEBUG_PIN = 1;
+	light_move_to_next_pos_callback();
+	//DEBUG_PIN = 0;
+    /* End user code. Do not edit comment generated here */
+}
+
+/***********************************************************************************************************************
 * Function Name: r_tau0_channel2_interrupt
 * Description  : This function INTTM02 interrupt service routine.
 * Arguments    : None
@@ -210,6 +229,6 @@ static void set_pwm_duty(uint8_t duty)
 static void __near r_tau0_channel2_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
-	light_move_to_next_pos_callback();
+	R_TAU0_Channel0_Set_SoftwareTriggerOn();
     /* End user code. Do not edit comment generated here */
 }
