@@ -16,7 +16,6 @@
 
 #pragma interrupt r_csi01_interrupt(vect=INTCSI01)
 #pragma interrupt r_tau0_channel1_interrupt(vect=INTTM01)
-#pragma interrupt r_tau0_channel2_interrupt(vect=INTTM02)
 
 static void light_move_to_next_pos_callback(void);
 
@@ -45,26 +44,28 @@ static int light_cur_pos;
  * [0]                  [1]                  [2]
  * <-------------------><-------------------><---...
  *  |
- *  +-----点灯マスタ周期(1000～50000us)
- *     +--PWM最大周期(点灯マスタ周期 - 一定期間※)
+ *  +-----点灯マスタ周期
+ *     +--PWM最大周期( = 点灯マスタ周期 - マージン期間(★1))
  *     |
- *    <---------------->
- * <-><-----------><---><-><-----------><---><-><...
- *  |  |            |   
- *  |  |            +---PWM OFF期間
- *  |  +----------------PWM ON期間
- *  +-------------------74HC595への転送時間等(PWMはOFF)
+ * <---------------->
+ * <-----------><---><-><-----------><---><-><...
+ *  |          ↑ |
+ *  |          ｜ +---PWM OFF期間(7セグ消灯)
+ *  |          └-----INTTM01(★2)
+ *  +-----------------PWM ON期間(7セグ点灯)
  *
- * ※この期間が長いと消灯時間が増えて上限輝度が下がるため
- *   なるべく短くしたい。しかし、短くし過ぎるとデータ指定を
- *   連続して行った場合にチラつきが発生する。
- *   大体100us当たりが良い(50usだとチラつき有り)。
+ * ★1: この期間が長いと消灯時間が増えて上限輝度が下がるため
+ *		なるべく短くしたい。しかし、短くし過ぎるとデータ指定を
+ *		連続して行った場合にチラつきが発生する。
+ * ★2: ここで次の周期の設定(TM00, TM01, 74HC595)を行う。
+ *		7セグ消灯期間中(輝度最大の場合でもマージン期間中)のため、
+ *		安全に次の周期を設定できる。
  */
-// 上記の図の「一定期間」の値。
+// 上記の図の「マージン期間」の値。
 // 短くて間に合うなら短い方が良い。
 // 100us@(CLK=20MHz, DIV=16) ---> 250
 // 50us                      ---> 125
-#define LIGHT_PWM_BLANK_VALUE	(250)
+#define LIGHT_PWM_BLANK_VALUE	(125)
  
 /** 点灯マスタ周期のTDR値(ダイナミック点灯周期の大元) */
 static uint16_t light_master_cycle_value;
@@ -72,7 +73,7 @@ static uint16_t light_master_cycle_value;
 /** PWM最大周期のTDR値 */
 static uint16_t light_pwm_width_value;
 
-static void set_pwm_duty(uint8_t duty);
+static __inline void set_pwm_duty(uint8_t duty);
 
 /**
  * 点灯部の初期化
@@ -91,8 +92,10 @@ void light_init(void)
 	light_cur_pos = 0;
 	
 	R_CSI01_Start();
-	R_TAU0_Channel0_Start();	// 輝度用タイマ
-	R_TAU0_Channel2_Start();	// 表示更新用タイマ
+	
+	// チャネル0: 表示更新用タイマ
+	// チャネル1: 輝度用タイマ
+	R_TAU0_Channel0_Start();
 }
 
 /**
@@ -120,7 +123,7 @@ void light_set_brightness(const uint8_t brightness[])
 int light_set_light_cycle(uint16_t light_cycle_us)
 {
 	// 引数チェック
-	if ((light_cycle_us < 1000 ) || (50000 < light_cycle_us)) {
+	if ((light_cycle_us < 500 ) || (50000 < light_cycle_us)) {
 		return -1;
 	}
 	
@@ -128,7 +131,7 @@ int light_set_light_cycle(uint16_t light_cycle_us)
 	// ・1カウント当たりのμ秒 = CLOCK_HZ / TAU0_CHANNEL2_DIVISOR / 1000 / 1000 [us/cnt]
 	//   ※実際の計算は、精度の関係で順番を変えていることに注意。
 	// ・CLOCK_HZ=20MHz、DIVISOR=16 の場合は、1.25[us/cnt]。
-	light_master_cycle_value = (uint16_t)((((CLOCK_HZ / 1000) / TAU0_CHANNEL2_DIVISOR) * (uint32_t)light_cycle_us) / 1000);
+	light_master_cycle_value = (uint16_t)((((CLOCK_HZ / 1000) / TAU0_CHANNEL0_DIVISOR) * (uint32_t)light_cycle_us) / 1000);
 	light_pwm_width_value = light_master_cycle_value - LIGHT_PWM_BLANK_VALUE;
 	
 	return 0;
@@ -165,12 +168,8 @@ void light_move_to_next_pos_callback(void)
 	set_pwm_duty(light[light_cur_pos].brightness);
 
 	// 点灯周期更新
-	TDR02H = (uint8_t)((light_master_cycle_value & 0xFF00) >> 8);
-	TDR02L = (uint8_t)((light_master_cycle_value & 0x00FF) >> 0);
-	
-	// RCKは立ち上がりで反映
-	PIN_RCK = 1;
-	PIN_RCK = 0;
+	TDR00H = (uint8_t)((light_master_cycle_value & 0xFF00) >> 8);
+	TDR00L = (uint8_t)((light_master_cycle_value & 0x00FF) >> 0);
 	
 	// 除算を使用しているが、命令レベルではシフト演算に
 	// 置き換えられており、数μ秒しかかからない。
@@ -182,7 +181,7 @@ void light_move_to_next_pos_callback(void)
  *
  * ワンショット・パルス機能を使用して実現する。
  */
-static void set_pwm_duty(uint8_t duty)
+static __inline void set_pwm_duty(uint8_t duty)
 {
 	uint8_t new_tdr01h, new_tdr01l;
 	uint16_t tdr_duty_255 = light_pwm_width_value;
@@ -192,9 +191,6 @@ static void set_pwm_duty(uint8_t duty)
 	new_tdr01h = (uint8_t)((tdr_duty_x & 0xFF00) >> 8);
 	new_tdr01l = (uint8_t)(tdr_duty_x & 0x00FF);
 
-	// ワンショットマスタ周期の設定(最小値。S/Wトリガ用)
-	TDR00H = 0;	// 最小値固定(PWM制御開始までの時間)
-	TDR00L = 0;	// 最小値固定(PWM制御開始までの時間)
 	TDR01H = new_tdr01h;
 	TDR01L = new_tdr01l;
 }
@@ -217,18 +213,10 @@ static void __near r_tau0_channel1_interrupt(void)
 	//DEBUG_PIN = 1;
 	light_move_to_next_pos_callback();
 	//DEBUG_PIN = 0;
-    /* End user code. Do not edit comment generated here */
-}
-
-/***********************************************************************************************************************
-* Function Name: r_tau0_channel2_interrupt
-* Description  : This function INTTM02 interrupt service routine.
-* Arguments    : None
-* Return Value : None
-***********************************************************************************************************************/
-static void __near r_tau0_channel2_interrupt(void)
-{
-    /* Start user code. Do not edit comment generated here */
-	R_TAU0_Channel0_Set_SoftwareTriggerOn();
+	
+	// RCKは立ち上がりで反映
+	PIN_RCK = 1;
+	PIN_RCK = 0;
+	
     /* End user code. Do not edit comment generated here */
 }
